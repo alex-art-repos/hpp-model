@@ -1,6 +1,8 @@
 apply plugin: 'java'
 
+targetCompatibility = '1.7'
 sourceCompatibility = '1.7'
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // NetBeans will automatically add "run" and "debug" tasks relying on the
@@ -11,20 +13,135 @@ sourceCompatibility = '1.7'
 // prefer. In this case NetBeans will not add these tasks but you may rely on
 // your own implementation.
 if (!hasProperty('mainClass')) {
-    // ext.mainClass = 'org.hpp.core.App'
     ext.mainClass = 'org.hpp.core.App'
 }
 
 repositories {
-    // mavenCentral()
     // You may define additional repositories, or even remove "mavenCentral()".
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+    maven {
+        url 'http://192.168.126.46:8081/artifactory/repo'
+    }
+    
+    mavenCentral()
 }
 
 dependencies {
     // TODO: Add dependencies here ...
     // You can read more about how to add dependency here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
-    testCompile group: 'junit', name: 'junit', version: '4.10'
+    compile( 
+
+    )
+        
+    testCompile(
+        [group: 'junit', name: 'junit', version: '4.10']
+    )
 }
+
+project.version = '1.0.0'
+project.ext.version = project.version // save current version
+
+/**
+ * ================ Common tasks ================ 
+ **/
+task copyToLib(type: Copy) {
+    into "$buildDir/libs/libs"
+    from configurations.runtime
+}
+    
+task copyToCfg(type: Copy) {
+    into "$buildDir/libs/cfg"
+    from 'cfg'
+}
+
+task copyToEnv(type: Copy) {
+    into "$buildDir/libs"
+    from 'env'
+}
+
+task buildExecutor
+buildExecutor.dependsOn 'copyToLib'
+buildExecutor.dependsOn 'copyToCfg'
+buildExecutor.dependsOn 'copyToEnv'
+
+jar.dependsOn 'buildExecutor'
+
+jar.doFirst {
+    // remove version from WAR name
+    project.version = ''
+    
+    def classPath = ""
+
+    if ( new File("$buildDir/libs/libs").exists() ) {
+        files(file("$buildDir/libs/libs").listFiles()).each { File file ->
+            classPath += "./libs/" + file.name + " "
+        }
+    }
+
+    println 'Classpath : ' + classPath
+    
+    manifest {
+        attributes(
+            "Created-By": "gradle $gradle.gradleVersion", 
+            "Built-By": "artemiev_a", 
+            "Specification-Title": "hpp-model", 
+            "Specification-Vendor": "HomeSoft", 
+            "Specification-Version": project.ext.version, 
+            "Implementation-Vendor": "HomeSoft", 
+            "Implementation-Title": "Hydropower plant modelling.", 
+            "Implementation-Version": project.ext.version,
+            'Main-class': project.ext.mainClass,
+            'Class-path': classPath
+        )
+    }
+}
+
+/**
+ * ================ Build dist ================ 
+ **/
+task buildDist(type: Tar) {
+    // remove version from WAR name
+    project.version = ''
+    
+    // baseName = project.ext.distNamePrefix
+    
+    File file = new File("$buildDir/dist")
+    file.mkdir()
+    destinationDir = file
+    
+    compression = Compression.GZIP
+    from "$buildDir/libs"
+}
+
+buildDist.dependsOn 'jar'
+assemble.dependsOn 'buildDist'
+
+/**
+ * ================ Bintray publish ================ 
+ **/
+apply plugin: 'maven'
+
+artifacts {
+    archives (file('build/dist/' + project.name + '-' + project.version + '.tgz')) {
+        group 'org.hpp'
+        name 'hpp-model'
+        classifier 'dist'
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+        }
+    }
+}
+
+uploadArchives.dependsOn = [] // prevent publish subprojects
+// uploadArchives.dependsOn 'updateVersionForUploadMode'
+
+task uploadExport
+
+uploadExport.dependsOn ':uploadArchives'
+
