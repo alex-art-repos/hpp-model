@@ -4,6 +4,10 @@
  */
 package org.hpp.ui;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import org.hpp.core.TerrainHeightMapExample;
 import org.hpp.terrain.fractal.Convex3D;
 
@@ -13,6 +17,8 @@ import org.hpp.terrain.fractal.Convex3D;
  */
 public class MainForm extends javax.swing.JFrame {
 
+    protected BufferedImage curImage = null;
+    
     /**
      * Creates new form MainForm
      */
@@ -29,28 +35,26 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        terrainPanel = new javax.swing.JPanel();
         renderBtn = new javax.swing.JButton();
+        minX = new javax.swing.JSpinner();
+        maxX = new javax.swing.JSpinner();
+        minZ = new javax.swing.JSpinner();
+        maxZ = new javax.swing.JSpinner();
+        saveBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        terrainPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        javax.swing.GroupLayout terrainPanelLayout = new javax.swing.GroupLayout(terrainPanel);
-        terrainPanel.setLayout(terrainPanelLayout);
-        terrainPanelLayout.setHorizontalGroup(
-            terrainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 198, Short.MAX_VALUE)
-        );
-        terrainPanelLayout.setVerticalGroup(
-            terrainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 159, Short.MAX_VALUE)
-        );
 
         renderBtn.setText("render");
         renderBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 renderBtnActionPerformed(evt);
+            }
+        });
+
+        saveBtn.setText("save");
+        saveBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveBtnActionPerformed(evt);
             }
         });
 
@@ -60,22 +64,38 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(terrainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
-                .addComponent(renderBtn)
-                .addGap(26, 26, 26))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(renderBtn)
+                    .addComponent(saveBtn))
+                .addGap(69, 69, 69)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(minZ)
+                    .addComponent(minX, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(maxZ)
+                    .addComponent(maxX, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 138, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(230, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(minX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(maxX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(renderBtn, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(terrainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(renderBtn)))
-                .addContainerGap(125, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(minZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(maxZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(saveBtn)
+                        .addContainerGap())))
         );
 
         pack();
@@ -83,15 +103,37 @@ public class MainForm extends javax.swing.JFrame {
 
     private void renderBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renderBtnActionPerformed
         try {
-            this.getGraphics().drawImage( new TerrainHeightMapExample().getTerrainImage(false), 
-                    0, 0, this);
+            curImage = new TerrainHeightMapExample().getTerrainImage(
+                        ((Number)minX.getValue()).doubleValue(), 
+                        ((Number)maxX.getValue()).doubleValue(), 
+                        ((Number)minZ.getValue()).doubleValue(), 
+                        ((Number)maxZ.getValue()).doubleValue(), 
+                        false);
+
+            this.getGraphics().drawImage( curImage, 0, 0, this);
         } catch (Exception exc) {
             exc.printStackTrace();
         }
     }//GEN-LAST:event_renderBtnActionPerformed
 
+    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
+        if ( curImage == null ) {
+            return;
+        }
+        
+        try {
+            ImageIO.write(curImage, "png", new File("terrain_save.png"));
+        } catch (IOException e1) {
+            System.out.println("Could not write the image file.");
+        }
+    }//GEN-LAST:event_saveBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSpinner maxX;
+    private javax.swing.JSpinner maxZ;
+    private javax.swing.JSpinner minX;
+    private javax.swing.JSpinner minZ;
     private javax.swing.JButton renderBtn;
-    private javax.swing.JPanel terrainPanel;
+    private javax.swing.JButton saveBtn;
     // End of variables declaration//GEN-END:variables
 }

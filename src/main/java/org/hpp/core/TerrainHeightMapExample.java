@@ -100,21 +100,22 @@ public class TerrainHeightMapExample {
 
     }//end of main
 
-    public BufferedImage getTerrainImage(boolean bGrayscale) throws ExceptionInvalidParam {
+    public BufferedImage getTerrainImage(double minX, double maxX, double minZ, double maxZ, boolean bGrayscale) throws ExceptionInvalidParam {
         // create Perlin noise module object
         Perlin perlin1 = new Perlin();
         
         perlin1.setSeed( new Long(System.currentTimeMillis()).intValue() );
 
         // create Noisemap object
-        NoiseMap heightMap = new NoiseMap(256, 256);
+        NoiseMap heightMap = new NoiseMap(340, 340);
 
         // create Builder object
         NoiseMapBuilderPlane heightMapBuilder = new NoiseMapBuilderPlane();
         heightMapBuilder.setSourceModule(perlin1);
         heightMapBuilder.setDestNoiseMap(heightMap);
-        heightMapBuilder.setDestSize(256, 256);
-        heightMapBuilder.setBounds(2.0, 6.0, 1.0, 5.0);
+        heightMapBuilder.setDestSize(340, 340);
+        heightMapBuilder.setBounds(minX, maxX, minZ, maxZ);
+        // heightMapBuilder.setBounds(2.0, 6.0, 1.0, 5.0);
         heightMapBuilder.build();
 
         // create renderer object
@@ -126,6 +127,11 @@ public class TerrainHeightMapExample {
             renderer.buildGrayscaleGradient();
         } else {
             renderer.buildTerrainGradient();
+//            renderer.addGradientPoint (-1.0000, new ColorCafe (  0,   0, 255, 255)); // deeps
+//            renderer.addGradientPoint ( 0.0, new ColorCafe (0, 0,  128, 255)); // sand
+//            renderer.addGradientPoint ( 0.1250, new ColorCafe ( 32, 160,   0, 255)); // grass
+//            renderer.addGradientPoint ( 0.7500, new ColorCafe (128, 128, 128, 255)); // rock
+//            renderer.addGradientPoint ( 1.0000, new ColorCafe (255, 255, 255, 255)); // snow
         }
 
         // Set up the texture renderer and pass the noise map to it.
