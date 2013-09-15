@@ -120,9 +120,9 @@ public class SlimeExample
       // Create a green slime palette.  A dirt brown color is used for very low
       // values while green is used for the rest of the values.
       renderer.clearGradient (); 
-      renderer.addGradientPoint (-1.0000, new ColorCafe (160,  64,  42, 255));
-      renderer.addGradientPoint (0.0000, new ColorCafe ( 64, 192,  64, 255));
-      renderer.addGradientPoint (1.0000, new ColorCafe (128, 255, 128, 255));
+      renderer.addGradientTerrainPoint (-1.0000, new ColorCafe (160,  64,  42, 255));
+      renderer.addGradientTerrainPoint (0.0000, new ColorCafe ( 64, 192,  64, 255));
+      renderer.addGradientTerrainPoint (1.0000, new ColorCafe (128, 255, 128, 255));
       
       // Set up the texture renderer and pass the noise map to it.
       ImageCafe destTexture = new ImageCafe(textureMap.getWidth(), textureMap.getHeight());

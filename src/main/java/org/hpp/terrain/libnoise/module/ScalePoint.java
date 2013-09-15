@@ -43,16 +43,16 @@ public class ScalePoint extends ModuleBase
    /// This noise module requires one source module.
 
    // Default scaling factor applied to the @a x coordinate for the
-   /// ScalePoint noise module.
-   static final double DEFAULT_SCALE_POINT_X = 1.0;
+   /// ScaleTerrainPoint noise module.
+   static final double DEFAULT_SCALE_TerrainPoint_X = 1.0;
 
    /// Default scaling factor applied to the @a y coordinate for the
-   /// ScalePoint noise module.
-   static final double DEFAULT_SCALE_POINT_Y = 1.0;
+   /// ScaleTerrainPoint noise module.
+   static final double DEFAULT_SCALE_TerrainPoint_Y = 1.0;
 
    /// Default scaling factor applied to the @a z coordinate for the
-   /// ScalePoint noise module.
-   static final double DEFAULT_SCALE_POINT_Z = 1.0;
+   /// ScaleTerrainPoint noise module.
+   static final double DEFAULT_SCALE_TerrainPoint_Z = 1.0;
 
    /// Scaling factor applied to the @a x coordinate of the input value.
    double xScale;
@@ -69,9 +69,9 @@ public class ScalePoint extends ModuleBase
       super(1);
       setSourceModule(0, sourceModule);
 
-      xScale = DEFAULT_SCALE_POINT_X;
-      yScale = DEFAULT_SCALE_POINT_Y;
-      zScale = DEFAULT_SCALE_POINT_Z; 
+      xScale = DEFAULT_SCALE_TerrainPoint_X;
+      yScale = DEFAULT_SCALE_TerrainPoint_Y;
+      zScale = DEFAULT_SCALE_TerrainPoint_Z; 
    }
 
    public double getValue (double x, double y, double z)

@@ -27,12 +27,12 @@ package org.hpp.terrain.libnoise.util;
 
 public class GradientPoint
 {
- /// Defines a point used to build a color gradient.
+ /// Defines a TerrainPoint used to build a color gradient.
    ///
    /// A color gradient is a list of gradually-changing colors.  A color
-   /// gradient is defined by a list of <i>gradient points</i>.  Each
-   /// gradient point has a position and a color.  In a color gradient, the
-   /// colors between two adjacent gradient points are linearly interpolated.
+   /// gradient is defined by a list of <i>gradient TerrainPoints</i>.  Each
+   /// gradient TerrainPoint has a position and a color.  In a color gradient, the
+   /// colors between two adjacent gradient TerrainPoints are linearly interpolated.
    ///
    /// The ColorGradient class defines a color gradient by a list of these
    /// objects.

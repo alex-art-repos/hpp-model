@@ -65,7 +65,7 @@ public class NoiseGen
    {
       
       // Create a unit-length cube aligned along an integer boundary.  This cube
-      // surrounds the input point.
+      // surrounds the input TerrainPoint.
       int x0 = (x > 0.0? (int)x: (int)x - 1);
       int x1 = x0 + 1;
       int y0 = (y > 0.0? (int)y: (int)y - 1);
@@ -96,7 +96,7 @@ public class NoiseGen
       }
 
       // Now calculate the noise values at each vertex of the cube.  To generate
-      // the coherent-noise value at the input point, interpolate these eight
+      // the coherent-noise value at the input TerrainPoint, interpolate these eight
       // noise values using the S-curve value as the interpolant (trilinear
       // interpolation.)
       double n0, n1, ix0, ix1, iy0, iy1;
@@ -143,16 +143,16 @@ public class NoiseGen
 
       // Set up us another vector equal to the distance between the two vectors
       // passed to this function.
-      double xvPoint = (fx - (double)ix);
-      double yvPoint = (fy - (double)iy);
-      double zvPoint = (fz - (double)iz);
+      double xvTerrainPoint = (fx - (double)ix);
+      double yvTerrainPoint = (fy - (double)iy);
+      double zvTerrainPoint = (fz - (double)iz);
 
       // Now compute the dot product of the gradient vector with the distance
       // vector.  The resulting value is gradient noise.  Apply a scaling value
       // so that this noise value ranges from -1.0 to 1.0.
-      return ((xvGradient * xvPoint)
-            + (yvGradient * yvPoint)
-            + (zvGradient * zvPoint)) * 2.12;
+      return ((xvGradient * xvTerrainPoint)
+            + (yvGradient * yvTerrainPoint)
+            + (zvGradient * zvTerrainPoint)) * 2.12;
    }
 
    public static int IntValueNoise3D (int x, int y, int z, int seed)
@@ -174,7 +174,7 @@ public class NoiseGen
          NoiseQuality noiseQuality)
    {
       // Create a unit-length cube aligned along an integer boundary.  This cube
-      // surrounds the input point.
+      // surrounds the input TerrainPoint.
       int x0 = (x > 0.0? (int)x: (int)x - 1);
       int x1 = x0 + 1;
       int y0 = (y > 0.0? (int)y: (int)y - 1);
@@ -205,7 +205,7 @@ public class NoiseGen
       }
 
       // Now calculate the noise values at each vertex of the cube.  To generate
-      // the coherent-noise value at the input point, interpolate these eight
+      // the coherent-noise value at the input TerrainPoint, interpolate these eight
       // noise values using the S-curve value as the interpolant (trilinear
       // interpolation.)
       double n0, n1, ix0, ix1, iy0, iy1;
@@ -232,12 +232,12 @@ public class NoiseGen
       return 1.0 - ((double)IntValueNoise3D (x, y, z, seed) / 1073741824.0);
    }
    
-   /// Modifies a floating-point value so that it can be stored in a
+   /// Modifies a floating-TerrainPoint value so that it can be stored in a
    /// int32 variable.
    ///
-   /// @param n A floating-point number.
+   /// @param n A floating-TerrainPoint number.
    ///
-   /// @returns The modified floating-point number.
+   /// @returns The modified floating-TerrainPoint number.
    ///
    /// This function does not modify @a n.
    ///

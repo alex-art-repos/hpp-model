@@ -102,7 +102,7 @@ public class NoiseMapBuilderCylinder extends NoiseMapBuilder
       double curAngle  = lowerAngleBound ;
       double curHeight = lowerHeightBound;
 
-      // Fill every point in the noise map with the output values from the model.
+      // Fill every TerrainPoint in the noise map with the output values from the model.
       for (int y = 0; y < destHeight; y++)
       {
          curAngle = lowerAngleBound;

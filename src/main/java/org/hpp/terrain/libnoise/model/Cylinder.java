@@ -47,7 +47,7 @@ public class Cylinder
 
 
 
-   /// A pointer to the noise module used to generate the output values.
+   /// A TerrainPointer to the noise module used to generate the output values.
    ModuleBase module;
 
    public Cylinder ()

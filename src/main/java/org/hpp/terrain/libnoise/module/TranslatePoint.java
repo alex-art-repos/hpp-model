@@ -44,16 +44,16 @@ public class TranslatePoint extends ModuleBase
 
 
    /// Default translation factor applied to the @a x coordinate for the
-   /// TranslatePoint noise module.
-   static final double DEFAULT_TRANSLATE_POINT_X = 0.0;
+   /// TranslateTerrainPoint noise module.
+   static final double DEFAULT_TRANSLATE_TerrainPoint_X = 0.0;
 
    /// Default translation factor applied to the @a y coordinate for the
-   /// TranslatePoint noise module.
-   static final double DEFAULT_TRANSLATE_POINT_Y = 0.0;
+   /// TranslateTerrainPoint noise module.
+   static final double DEFAULT_TRANSLATE_TerrainPoint_Y = 0.0;
 
    /// Default translation factor applied to the @a z coordinate for the
-   /// TranslatePoint noise module.
-   static final double DEFAULT_TRANSLATE_POINT_Z = 0.0;
+   /// TranslateTerrainPoint noise module.
+   static final double DEFAULT_TRANSLATE_TerrainPoint_Z = 0.0;
 
    /// Translation amount applied to the @a x coordinate of the input
    /// value.
@@ -71,9 +71,9 @@ public class TranslatePoint extends ModuleBase
    {
       super(1);
       setSourceModule(0, sourceModule);
-      xTranslation = DEFAULT_TRANSLATE_POINT_X;
-      yTranslation = DEFAULT_TRANSLATE_POINT_Y;
-      zTranslation = DEFAULT_TRANSLATE_POINT_Z;
+      xTranslation = DEFAULT_TRANSLATE_TerrainPoint_X;
+      yTranslation = DEFAULT_TRANSLATE_TerrainPoint_Y;
+      zTranslation = DEFAULT_TRANSLATE_TerrainPoint_Z;
 
    }
 

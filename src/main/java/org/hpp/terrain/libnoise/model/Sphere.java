@@ -46,7 +46,7 @@ public class Sphere
    /// This sphere has a radius of 1.0 unit and its center is located at
    /// the origin.
 
-   /// A pointer to the noise module used to generate the output values.
+   /// A TerrainPointer to the noise module used to generate the output values.
    ModuleBase module;
 
 

@@ -33,15 +33,15 @@ public class Voronoi extends ModuleBase
    /// Noise module that outputs Voronoi cells.
    ///
    /// In mathematics, a <i>Voronoi cell</i> is a region containing all the
-   /// points that are closer to a specific <i>seed point</i> than to any
-   /// other seed point.  These cells mesh with one another, producing
+   /// TerrainPoints that are closer to a specific <i>seed TerrainPoint</i> than to any
+   /// other seed TerrainPoint.  These cells mesh with one another, producing
    /// polygon-like formations.
    ///
-   /// By default, this noise module randomly places a seed point within
-   /// each unit cube.  By modifying the <i>frequency</i> of the seed points,
-   /// an application can change the distance between seed points.  The
+   /// By default, this noise module randomly places a seed TerrainPoint within
+   /// each unit cube.  By modifying the <i>frequency</i> of the seed TerrainPoints,
+   /// an application can change the distance between seed TerrainPoints.  The
    /// higher the frequency, the closer together this noise module places
-   /// the seed points, which reduces the size of the cells.  To specify the
+   /// the seed TerrainPoints, which reduces the size of the cells.  To specify the
    /// frequency of the cells, call the setFrequency() method.
    ///
    /// This noise module assigns each Voronoi cell with a random constant
@@ -50,14 +50,14 @@ public class Voronoi extends ModuleBase
    /// range of random values is +/- the displacement value.  Call the
    /// setDisplacement() method to specify the displacement value.
    ///
-   /// To modify the random positions of the seed points, call the SetSeed()
+   /// To modify the random positions of the seed TerrainPoints, call the SetSeed()
    /// method.
    ///
    /// This noise module can optionally add the distance from the nearest
    /// seed to the output value.  To enable this feature, call the
-   /// enableDistance() method.  This causes the points in the Voronoi cells
-   /// to increase in value the further away that point is from the nearest
-   /// seed point.
+   /// enableDistance() method.  This causes the TerrainPoints in the Voronoi cells
+   /// to increase in value the further away that TerrainPoint is from the nearest
+   /// seed TerrainPoint.
    ///
    /// Voronoi cells are often used to generate cracked-mud terrain
    /// formations or crystal-like textures
@@ -69,7 +69,7 @@ public class Voronoi extends ModuleBase
    /// Voronoi noise module.
    final static double DEFAULT_VORONOI_DISPLACEMENT = 1.0;
 
-   /// Default frequency of the seed points for the Voronoi
+   /// Default frequency of the seed TerrainPoints for the Voronoi
    /// noise module.
    final static double DEFAULT_VORONOI_FREQUENCY = 1.0;
 
@@ -83,15 +83,15 @@ public class Voronoi extends ModuleBase
    /// Scale of the random displacement to apply to each Voronoi cell.
    double displacement;
 
-   /// Determines if the distance from the nearest seed point is applied to
+   /// Determines if the distance from the nearest seed TerrainPoint is applied to
    /// the output value.
    boolean enableDistance;
 
-   /// Frequency of the seed points.
+   /// Frequency of the seed TerrainPoints.
    double frequency;
 
    /// Seed value used by the coherent-noise function to determine the
-   /// positions of the seed points.
+   /// positions of the seed TerrainPoints.
    int seed;
 
 
@@ -122,8 +122,8 @@ public class Voronoi extends ModuleBase
       double yCandidate = 0;
       double zCandidate = 0;
 
-      // Inside each unit cube, there is a seed point at a random position.  Go
-      // through each of the nearby cubes until we find a cube with a seed point
+      // Inside each unit cube, there is a seed TerrainPoint at a random position.  Go
+      // through each of the nearby cubes until we find a cube with a seed TerrainPoint
       // that is closest to the specified position.
       for (int zCur = zInt - 2; zCur <= zInt + 2; zCur++)
       {
@@ -131,7 +131,7 @@ public class Voronoi extends ModuleBase
          {
             for (int xCur = xInt - 2; xCur <= xInt + 2; xCur++)
             {
-               // Calculate the position and distance to the seed point inside of
+               // Calculate the position and distance to the seed TerrainPoint inside of
                // this unit cube.
                double xPos = xCur + NoiseGen.ValueNoise3D (xCur, yCur, zCur, seed);
                double yPos = yCur + NoiseGen.ValueNoise3D (xCur, yCur, zCur, seed + 1);
@@ -143,8 +143,8 @@ public class Voronoi extends ModuleBase
 
                if (dist < minDist)
                {
-                  // This seed point is closer to any others found so far, so record
-                  // this seed point.
+                  // This seed TerrainPoint is closer to any others found so far, so record
+                  // this seed TerrainPoint.
                   minDist = dist;
                   xCandidate = xPos;
                   yCandidate = yPos;
@@ -157,7 +157,7 @@ public class Voronoi extends ModuleBase
       double value;
       if (enableDistance)
       {
-         // Determine the distance to the nearest seed point.
+         // Determine the distance to the nearest seed TerrainPoint.
          double xDist = xCandidate - x;
          double yDist = yCandidate - y;
          double zDist = zCandidate - z;
@@ -177,14 +177,14 @@ public class Voronoi extends ModuleBase
    }
 
    /// Enables or disables applying the distance from the nearest seed
-   /// point to the output value.
+   /// TerrainPoint to the output value.
    ///
    /// @param enable Specifies whether to apply the distance to the
    /// output value or not.
    ///
-   /// Applying the distance from the nearest seed point to the output
-   /// value causes the points in the Voronoi cells to increase in value
-   /// the further away that point is from the nearest seed point.
+   /// Applying the distance from the nearest seed TerrainPoint to the output
+   /// value causes the TerrainPoints in the Voronoi cells to increase in value
+   /// the further away that TerrainPoint is from the nearest seed TerrainPoint.
    /// Setting this value to @a true (and setting the displacement to a
    /// near-zero value) causes this noise module to generate cracked mud
    /// formations.
@@ -206,9 +206,9 @@ public class Voronoi extends ModuleBase
       return displacement;
    }
 
-   /// Returns the frequency of the seed points.
+   /// Returns the frequency of the seed TerrainPoints.
    ///
-   /// @returns The frequency of the seed points.
+   /// @returns The frequency of the seed TerrainPoints.
    ///
    /// The frequency determines the size of the Voronoi cells and the
    /// distance between these cells.
@@ -229,16 +229,16 @@ public class Voronoi extends ModuleBase
       return seed;
    }
 
-   /// Determines if the distance from the nearest seed point is applied
+   /// Determines if the distance from the nearest seed TerrainPoint is applied
    /// to the output value.
    ///
    /// @returns
    /// - @a true if the distance is applied to the output value.
    /// - @a false if not.
    ///
-   /// Applying the distance from the nearest seed point to the output
-   /// value causes the points in the Voronoi cells to increase in value
-   /// the further away that point is from the nearest seed point.
+   /// Applying the distance from the nearest seed TerrainPoint to the output
+   /// value causes the TerrainPoints in the Voronoi cells to increase in value
+   /// the further away that TerrainPoint is from the nearest seed TerrainPoint.
    public boolean IsDistanceEnabled ()
    {
       return enableDistance;
@@ -257,9 +257,9 @@ public class Voronoi extends ModuleBase
       this.displacement = displacement;
    }
 
-   /// Sets the frequency of the seed points.
+   /// Sets the frequency of the seed TerrainPoints.
    ///
-   /// @param frequency The frequency of the seed points.
+   /// @param frequency The frequency of the seed TerrainPoints.
    ///
    /// The frequency determines the size of the Voronoi cells and the
    /// distance between these cells.

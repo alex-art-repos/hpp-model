@@ -1,6 +1,9 @@
 package org.hpp.core;
 
+import java.util.Date;
 import org.hpp.ui.MainForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App {
     /**
@@ -23,7 +26,11 @@ public class App {
             // java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        final Logger log = LoggerFactory.getLogger(App.class);
 
+        log.info("App started at " + new Date());
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

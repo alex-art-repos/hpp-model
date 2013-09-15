@@ -117,11 +117,11 @@ public class JadeExample
 
       // jade gradient
       renderer.clearGradient ();
-      renderer.addGradientPoint (-1.000, new ColorCafe ( 24, 146, 102, 255));
-      renderer.addGradientPoint ( 0.000, new ColorCafe ( 78, 154, 115, 255));
-      renderer.addGradientPoint ( 0.250, new ColorCafe (128, 204, 165, 255));
-      renderer.addGradientPoint ( 0.375, new ColorCafe ( 78, 154, 115, 255));
-      renderer.addGradientPoint ( 1.000, new ColorCafe ( 29, 135, 102, 255));
+      renderer.addGradientTerrainPoint (-1.000, new ColorCafe ( 24, 146, 102, 255));
+      renderer.addGradientTerrainPoint ( 0.000, new ColorCafe ( 78, 154, 115, 255));
+      renderer.addGradientTerrainPoint ( 0.250, new ColorCafe (128, 204, 165, 255));
+      renderer.addGradientTerrainPoint ( 0.375, new ColorCafe ( 78, 154, 115, 255));
+      renderer.addGradientTerrainPoint ( 1.000, new ColorCafe ( 29, 135, 102, 255));
 
       
       // Set up the texture renderer and pass the noise map to it.

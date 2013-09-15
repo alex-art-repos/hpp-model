@@ -96,7 +96,7 @@ public class NoiseMapBuilderSphere extends NoiseMapBuilder
       double curLon = westLonBound ;
       double curLat = southLatBound;
 
-      // Fill every point in the noise map with the output values from the model.
+      // Fill every TerrainPoint in the noise map with the output values from the model.
       for (int y = 0; y < destHeight; y++)
       {
          curLon = westLonBound;

@@ -4,21 +4,15 @@
  */
 package org.hpp.ui;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import org.hpp.core.TerrainHeightMapExample;
-import org.hpp.terrain.fractal.Convex3D;
+import org.hpp.ui.ctrl.MainFormCtrl;
 
 /**
  *
  * @author root
  */
 public class MainForm extends javax.swing.JFrame {
+    private MainFormCtrl formCtrl = new MainFormCtrl(this);
 
-    protected BufferedImage curImage = null;
-    
     /**
      * Creates new form MainForm
      */
@@ -35,105 +29,187 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        renderBtn = new javax.swing.JButton();
-        minX = new javax.swing.JSpinner();
-        maxX = new javax.swing.JSpinner();
-        minZ = new javax.swing.JSpinner();
-        maxZ = new javax.swing.JSpinner();
-        saveBtn = new javax.swing.JButton();
+        mainSplit = new javax.swing.JSplitPane();
+        inputParamPanel = new javax.swing.JPanel();
+        modelPanel = new javax.swing.JPanel();
+        modelSplit = new javax.swing.JSplitPane();
+        mapScrollPane = new javax.swing.JScrollPane();
+        mapPanelBackground = new javax.swing.JPanel();
+        mapPanel = new org.hpp.ui.component.MapPanel();
+        outputParamPanel = new javax.swing.JPanel();
+        mainMenu = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        exitMenu = new javax.swing.JMenuItem();
+        mapMenu = new javax.swing.JMenu();
+        genMapMenu = new javax.swing.JMenuItem();
+        saveMapMenu = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Hydropower plant model");
+        setLocationByPlatform(true);
 
-        renderBtn.setText("render");
-        renderBtn.addActionListener(new java.awt.event.ActionListener() {
+        mainSplit.setDividerLocation(150);
+        mainSplit.setDividerSize(10);
+        mainSplit.setOneTouchExpandable(true);
+
+        javax.swing.GroupLayout inputParamPanelLayout = new javax.swing.GroupLayout(inputParamPanel);
+        inputParamPanel.setLayout(inputParamPanelLayout);
+        inputParamPanelLayout.setHorizontalGroup(
+            inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 149, Short.MAX_VALUE)
+        );
+        inputParamPanelLayout.setVerticalGroup(
+            inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 551, Short.MAX_VALUE)
+        );
+
+        mainSplit.setLeftComponent(inputParamPanel);
+
+        modelSplit.setDividerLocation(450);
+        modelSplit.setDividerSize(10);
+        modelSplit.setOneTouchExpandable(true);
+
+        mapPanel.setAutoscrolls(true);
+
+        javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
+        mapPanel.setLayout(mapPanelLayout);
+        mapPanelLayout.setHorizontalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 402, Short.MAX_VALUE)
+        );
+        mapPanelLayout.setVerticalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 403, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout mapPanelBackgroundLayout = new javax.swing.GroupLayout(mapPanelBackground);
+        mapPanelBackground.setLayout(mapPanelBackgroundLayout);
+        mapPanelBackgroundLayout.setHorizontalGroup(
+            mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                .addComponent(mapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 43, Short.MAX_VALUE))
+        );
+        mapPanelBackgroundLayout.setVerticalGroup(
+            mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                .addComponent(mapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 142, Short.MAX_VALUE))
+        );
+
+        mapScrollPane.setViewportView(mapPanelBackground);
+
+        modelSplit.setLeftComponent(mapScrollPane);
+
+        javax.swing.GroupLayout outputParamPanelLayout = new javax.swing.GroupLayout(outputParamPanel);
+        outputParamPanel.setLayout(outputParamPanelLayout);
+        outputParamPanelLayout.setHorizontalGroup(
+            outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 116, Short.MAX_VALUE)
+        );
+        outputParamPanelLayout.setVerticalGroup(
+            outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 549, Short.MAX_VALUE)
+        );
+
+        modelSplit.setRightComponent(outputParamPanel);
+
+        javax.swing.GroupLayout modelPanelLayout = new javax.swing.GroupLayout(modelPanel);
+        modelPanel.setLayout(modelPanelLayout);
+        modelPanelLayout.setHorizontalGroup(
+            modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(modelSplit)
+        );
+        modelPanelLayout.setVerticalGroup(
+            modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(modelSplit)
+        );
+
+        mainSplit.setRightComponent(modelPanel);
+
+        fileMenu.setText("File");
+
+        jMenuItem1.setText("jMenuItem1");
+        fileMenu.add(jMenuItem1);
+        fileMenu.add(jSeparator1);
+
+        exitMenu.setText("Exit");
+        exitMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                renderBtnActionPerformed(evt);
+                exitMenuActionPerformed(evt);
             }
         });
+        fileMenu.add(exitMenu);
 
-        saveBtn.setText("save");
-        saveBtn.addActionListener(new java.awt.event.ActionListener() {
+        mainMenu.add(fileMenu);
+
+        mapMenu.setText("Map");
+
+        genMapMenu.setText("Generate...");
+        genMapMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveBtnActionPerformed(evt);
+                genMapMenuActionPerformed(evt);
             }
         });
+        mapMenu.add(genMapMenu);
+
+        saveMapMenu.setText("Save to file");
+        saveMapMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMapMenuActionPerformed(evt);
+            }
+        });
+        mapMenu.add(saveMapMenu);
+
+        mainMenu.add(mapMenu);
+
+        setJMenuBar(mainMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(renderBtn)
-                    .addComponent(saveBtn))
-                .addGap(69, 69, 69)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(minZ)
-                    .addComponent(minX, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(maxZ)
-                    .addComponent(maxX, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 138, Short.MAX_VALUE))
+            .addComponent(mainSplit)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(230, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(minX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(maxX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(renderBtn, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(minZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(maxZ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(19, 19, 19))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(saveBtn)
-                        .addContainerGap())))
+            .addComponent(mainSplit)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void renderBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renderBtnActionPerformed
-        try {
-            curImage = new TerrainHeightMapExample().getTerrainImage(
-                        ((Number)minX.getValue()).doubleValue(), 
-                        ((Number)maxX.getValue()).doubleValue(), 
-                        ((Number)minZ.getValue()).doubleValue(), 
-                        ((Number)maxZ.getValue()).doubleValue(), 
-                        false);
+    private void genMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genMapMenuActionPerformed
+        formCtrl.generateMap(400, 400, 5, 100, 1, 4, 1, 2);
+        formCtrl.paintMap();
+    }//GEN-LAST:event_genMapMenuActionPerformed
 
-            this.getGraphics().drawImage( curImage, 0, 0, this);
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
-    }//GEN-LAST:event_renderBtnActionPerformed
+    private void saveMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMapMenuActionPerformed
+        formCtrl.saveMapToFile("map.png");
+    }//GEN-LAST:event_saveMapMenuActionPerformed
 
-    private void saveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveBtnActionPerformed
-        if ( curImage == null ) {
-            return;
-        }
-        
-        try {
-            ImageIO.write(curImage, "png", new File("terrain_save.png"));
-        } catch (IOException e1) {
-            System.out.println("Could not write the image file.");
-        }
-    }//GEN-LAST:event_saveBtnActionPerformed
+    private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
+        formCtrl.exitApp();
+    }//GEN-LAST:event_exitMenuActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JSpinner maxX;
-    private javax.swing.JSpinner maxZ;
-    private javax.swing.JSpinner minX;
-    private javax.swing.JSpinner minZ;
-    private javax.swing.JButton renderBtn;
-    private javax.swing.JButton saveBtn;
+    public javax.swing.JMenuItem exitMenu;
+    public javax.swing.JMenu fileMenu;
+    public javax.swing.JMenuItem genMapMenu;
+    public javax.swing.JPanel inputParamPanel;
+    public javax.swing.JMenuItem jMenuItem1;
+    public javax.swing.JPopupMenu.Separator jSeparator1;
+    public javax.swing.JMenuBar mainMenu;
+    public javax.swing.JSplitPane mainSplit;
+    public javax.swing.JMenu mapMenu;
+    public org.hpp.ui.component.MapPanel mapPanel;
+    public javax.swing.JPanel mapPanelBackground;
+    public javax.swing.JScrollPane mapScrollPane;
+    public javax.swing.JPanel modelPanel;
+    public javax.swing.JSplitPane modelSplit;
+    public javax.swing.JPanel outputParamPanel;
+    public javax.swing.JMenuItem saveMapMenu;
     // End of variables declaration//GEN-END:variables
 }

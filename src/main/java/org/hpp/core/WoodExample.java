@@ -124,9 +124,9 @@ public class WoodExample
 
       // Create a dark-stained wood palette
       renderer.clearGradient ();
-      renderer.addGradientPoint (-1.00, new ColorCafe (189, 94, 4, 255));
-      renderer.addGradientPoint ( 0.50, new ColorCafe (144, 48, 6, 255));
-      renderer.addGradientPoint ( 1.00, new ColorCafe ( 60, 10, 8, 255));
+      renderer.addGradientTerrainPoint (-1.00, new ColorCafe (189, 94, 4, 255));
+      renderer.addGradientTerrainPoint ( 0.50, new ColorCafe (144, 48, 6, 255));
+      renderer.addGradientTerrainPoint ( 1.00, new ColorCafe ( 60, 10, 8, 255));
 
       
       // Set up the texture renderer and pass the noise map to it.

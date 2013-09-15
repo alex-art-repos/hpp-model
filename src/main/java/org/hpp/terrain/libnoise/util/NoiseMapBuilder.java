@@ -48,7 +48,7 @@ public class NoiseMapBuilder
    ///
    /// To build the noise map, perform the following steps:
    /// - Pass the bounding coordinates to the setBounds() method.
-   /// - Pass the noise map size, in points, to the setDestSize() method.
+   /// - Pass the noise map size, in TerrainPoints, to the setDestSize() method.
    /// - Pass a NoiseMap object to the setDestNoiseMap() method.
    /// - Pass a noise module (derived from ModuleBase) to the
    ///   setSourceModule() method.
@@ -62,10 +62,10 @@ public class NoiseMapBuilder
    /// Count of rows completed
    int callback;
 
-   /// Height of the destination noise map, in points.
+   /// Height of the destination noise map, in TerrainPoints.
    int destHeight;
 
-   /// Width of the destination noise map, in points.
+   /// Width of the destination noise map, in TerrainPoints.
    int destWidth;
 
    /// Destination noise map that will contain the coherent-noise values.
@@ -119,7 +119,7 @@ public class NoiseMapBuilder
 
    /// Returns the height of the destination noise map.
    ///
-   /// @returns The height of the destination noise map, in points.
+   /// @returns The height of the destination noise map, in TerrainPoints.
    ///
    /// This object does not change the height in the destination noise
    /// map object until the build() method is called.
@@ -130,7 +130,7 @@ public class NoiseMapBuilder
 
    /// Returns the width of the destination noise map.
    ///
-   /// @returns The width of the destination noise map, in points.
+   /// @returns The width of the destination noise map, in TerrainPoints.
    ///
    /// This object does not change the height in the destination noise
    /// map object until the build() method is called.
@@ -170,9 +170,9 @@ public class NoiseMapBuilder
    /// Sets the size of the destination noise map.
    ///
    /// @param destWidth The width of the destination noise map, in
-   /// points.
+   /// TerrainPoints.
    /// @param destHeight The height of the destination noise map, in
-   /// points.
+   /// TerrainPoints.
    ///
    /// This method does not change the size of the destination noise map
    /// until the build() method is called.

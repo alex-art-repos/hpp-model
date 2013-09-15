@@ -107,7 +107,7 @@ public class NoiseMapBuilderPlane extends NoiseMapBuilder
       double xCur    = lowerXBound;
       double zCur    = lowerZBound;
       
-      // Fill every point in the noise map with the output values from the model.
+      // Fill every TerrainPoint in the noise map with the output values from the model.
       for (int z = 0; z < destHeight; z++)
       {
          xCur = lowerXBound;

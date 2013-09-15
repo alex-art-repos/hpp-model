@@ -45,7 +45,7 @@ public class Plane
    /// This plane extends infinitely in both directions.
    
 
-   /// A pointer to the noise module used to generate the output values.
+   /// A TerrainPointer to the noise module used to generate the output values.
    ModuleBase module;
 
    public Plane ()

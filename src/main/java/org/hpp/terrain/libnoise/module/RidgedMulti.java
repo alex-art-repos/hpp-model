@@ -181,7 +181,7 @@ public class RidgedMulti extends ModuleBase
 
       for (int curOctave = 0; curOctave < octaveCount; curOctave++)
       {
-         // Make sure that these floating-point values have the same range as a 32-
+         // Make sure that these floating-TerrainPoint values have the same range as a 32-
          // bit integer so that we can pass them to the coherent-noise functions.
          double nx, ny, nz;
          nx = NoiseGen.MakeInt32Range (x);
@@ -200,7 +200,7 @@ public class RidgedMulti extends ModuleBase
          signal *= signal;
 
          // The weighting from the previous octave is applied to the signal.
-         // Larger values have higher weights, producing sharp points along the
+         // Larger values have higher weights, producing sharp TerrainPoints along the
          // ridges.
          signal *= weight;
 

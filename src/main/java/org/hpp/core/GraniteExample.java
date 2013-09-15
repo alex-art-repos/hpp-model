@@ -104,13 +104,13 @@ public class GraniteExample
       // the palette; those colors provide the charactistic black and pink flecks
       // in granite.
       renderer.clearGradient (); 
-      renderer.addGradientPoint (-1.0000, new ColorCafe (  0,   0,   0, 255));
-      renderer.addGradientPoint (-0.9375, new ColorCafe (  0,   0,   0, 255));
-      renderer.addGradientPoint (-0.8750, new ColorCafe (216, 216, 242, 255));
-      renderer.addGradientPoint ( 0.0000, new ColorCafe (191, 191, 191, 255));
-      renderer.addGradientPoint ( 0.5000, new ColorCafe (210, 116, 125, 255));
-      renderer.addGradientPoint ( 0.7500, new ColorCafe (210, 113,  98, 255));
-      renderer.addGradientPoint ( 1.0000, new ColorCafe (255, 176, 192, 255));
+      renderer.addGradientTerrainPoint (-1.0000, new ColorCafe (  0,   0,   0, 255));
+      renderer.addGradientTerrainPoint (-0.9375, new ColorCafe (  0,   0,   0, 255));
+      renderer.addGradientTerrainPoint (-0.8750, new ColorCafe (216, 216, 242, 255));
+      renderer.addGradientTerrainPoint ( 0.0000, new ColorCafe (191, 191, 191, 255));
+      renderer.addGradientTerrainPoint ( 0.5000, new ColorCafe (210, 116, 125, 255));
+      renderer.addGradientTerrainPoint ( 0.7500, new ColorCafe (210, 113,  98, 255));
+      renderer.addGradientTerrainPoint ( 1.0000, new ColorCafe (255, 176, 192, 255));
 
       
       // Set up the texture renderer and pass the noise map to it.

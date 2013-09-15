@@ -21,10 +21,14 @@ repositories {
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
     maven {
-        url 'http://192.168.126.46:8081/artifactory/repo'
+        url 'http://jcenter.bintray.com'
     }
     
     mavenCentral()
+    
+    maven {
+        url 'http://192.168.126.46:8081/artifactory/repo'
+    }
 }
 
 dependencies {
@@ -32,7 +36,10 @@ dependencies {
     // You can read more about how to add dependency here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
     compile( 
-
+        [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'],
+        
+        [group: 'ch.qos.logback', name: 'logback-core', version: '1.0.13'],
+        [group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.13']
     )
         
     testCompile(

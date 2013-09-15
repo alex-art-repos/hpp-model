@@ -65,14 +65,14 @@ public class TerrainHeightMapExample {
 
         // terrain gradient
         renderer.clearGradient();
-//      renderer.addGradientPoint (-1.0000, new ColorCafe (  0,   0, 128, 255)); // deeps
-//      renderer.addGradientPoint (-0.2500, new ColorCafe (  0,   0, 255, 255)); // shallow
-//      renderer.addGradientPoint ( 0.0000, new ColorCafe (  0, 128, 255, 255)); // shore
-//      renderer.addGradientPoint ( 0.0625, new ColorCafe (240, 240,  64, 255)); // sand
-//      renderer.addGradientPoint ( 0.1250, new ColorCafe ( 32, 160,   0, 255)); // grass
-//      renderer.addGradientPoint ( 0.3750, new ColorCafe (224, 224,   0, 255)); // dirt
-//      renderer.addGradientPoint ( 0.7500, new ColorCafe (128, 128, 128, 255)); // rock
-//      renderer.addGradientPoint ( 1.0000, new ColorCafe (255, 255, 255, 255)); // snow
+//      renderer.addGradientTerrainPoint (-1.0000, new ColorCafe (  0,   0, 128, 255)); // deeps
+//      renderer.addGradientTerrainPoint (-0.2500, new ColorCafe (  0,   0, 255, 255)); // shallow
+//      renderer.addGradientTerrainPoint ( 0.0000, new ColorCafe (  0, 128, 255, 255)); // shore
+//      renderer.addGradientTerrainPoint ( 0.0625, new ColorCafe (240, 240,  64, 255)); // sand
+//      renderer.addGradientTerrainPoint ( 0.1250, new ColorCafe ( 32, 160,   0, 255)); // grass
+//      renderer.addGradientTerrainPoint ( 0.3750, new ColorCafe (224, 224,   0, 255)); // dirt
+//      renderer.addGradientTerrainPoint ( 0.7500, new ColorCafe (128, 128, 128, 255)); // rock
+//      renderer.addGradientTerrainPoint ( 1.0000, new ColorCafe (255, 255, 255, 255)); // snow
 
         renderer.buildGrayscaleGradient();
 
@@ -127,11 +127,11 @@ public class TerrainHeightMapExample {
             renderer.buildGrayscaleGradient();
         } else {
             renderer.buildTerrainGradient();
-//            renderer.addGradientPoint (-1.0000, new ColorCafe (  0,   0, 255, 255)); // deeps
-//            renderer.addGradientPoint ( 0.0, new ColorCafe (0, 0,  128, 255)); // sand
-//            renderer.addGradientPoint ( 0.1250, new ColorCafe ( 32, 160,   0, 255)); // grass
-//            renderer.addGradientPoint ( 0.7500, new ColorCafe (128, 128, 128, 255)); // rock
-//            renderer.addGradientPoint ( 1.0000, new ColorCafe (255, 255, 255, 255)); // snow
+//            renderer.addGradientTerrainPoint (-1.0000, new ColorCafe (  0,   0, 255, 255)); // deeps
+//            renderer.addGradientTerrainPoint ( 0.0, new ColorCafe (0, 0,  128, 255)); // sand
+//            renderer.addGradientTerrainPoint ( 0.1250, new ColorCafe ( 32, 160,   0, 255)); // grass
+//            renderer.addGradientTerrainPoint ( 0.7500, new ColorCafe (128, 128, 128, 255)); // rock
+//            renderer.addGradientTerrainPoint ( 1.0000, new ColorCafe (255, 255, 255, 255)); // snow
         }
 
         // Set up the texture renderer and pass the noise map to it.

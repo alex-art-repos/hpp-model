@@ -36,61 +36,61 @@ public class Curve extends ModuleBase
    ///
    /// This noise module maps the output value from the source module onto an
    /// application-defined curve.  This curve is defined by a number of
-   /// <i>control points</i>; each control point has an <i>input value</i>
+   /// <i>control TerrainPoints</i>; each control TerrainPoint has an <i>input value</i>
    /// that maps to an <i>output value</i>.
    ///
-   /// To add the control points to this curve, call the addControlPoint()
-   /// method.  Note that the class ControlPoint follows the class Curve in
+   /// To add the control TerrainPoints to this curve, call the addControlTerrainPoint()
+   /// method.  Note that the class ControlTerrainPoint follows the class Curve in
    /// this file.
    ///
    /// Since this curve is a cubic spline, an application must add a minimum
-   /// of four control points to the curve.  If this is not done, the
-   /// getValue() method fails.  Each control point can have any input and
-   /// output value, although no two control points can have the same input
-   /// value.  There is no limit to the number of control points that can be
+   /// of four control TerrainPoints to the curve.  If this is not done, the
+   /// getValue() method fails.  Each control TerrainPoint can have any input and
+   /// output value, although no two control TerrainPoints can have the same input
+   /// value.  There is no limit to the number of control TerrainPoints that can be
    /// added to the curve.  
    ///
    /// This noise module requires one source module
 
-   int controlPointCount;
-   ControlPoint[] controlPoints;
+   int controlTerrainPointCount;
+   ControlTerrainPoint[] controlTerrainPoints;
 
    public Curve (ModuleBase sourceModule) throws ExceptionInvalidParam
    {
       super(1);
       setSourceModule(0, sourceModule);
-      controlPointCount = 0;
-      controlPoints= new ControlPoint[1];
-      controlPoints[0] = new ControlPoint(0.0, 0.0);
+      controlTerrainPointCount = 0;
+      controlTerrainPoints= new ControlTerrainPoint[1];
+      controlTerrainPoints[0] = new ControlTerrainPoint(0.0, 0.0);
    }
 
-   public void addControlPoint (double inputValue, double outputValue)
+   public void addControlTerrainPoint (double inputValue, double outputValue)
       throws ExceptionInvalidParam
    {
-      // Find the insertion point for the new control point and insert the new
-      // point at that position.  The control point array will remain sorted by
+      // Find the insertion TerrainPoint for the new control TerrainPoint and insert the new
+      // TerrainPoint at that position.  The control TerrainPoint array will remain sorted by
       // input value.
       int insertionPos = findInsertionPos(inputValue);
       insertAtPos (insertionPos, inputValue, outputValue);
    }
 
-   public void clearAllControlPoints ()
+   public void clearAllControlTerrainPoints ()
    {
-      controlPoints = null;
-      controlPointCount = 0;
+      controlTerrainPoints = null;
+      controlTerrainPointCount = 0;
    }
 
    public int findInsertionPos (double inputValue) throws ExceptionInvalidParam
    {
       int insertionPos;
-      for (insertionPos = 0; insertionPos < controlPointCount; insertionPos++)
+      for (insertionPos = 0; insertionPos < controlTerrainPointCount; insertionPos++)
       {
-         if (inputValue < controlPoints[insertionPos].inputValue)
-            // We found the array index in which to insert the new control point.
+         if (inputValue < controlTerrainPoints[insertionPos].inputValue)
+            // We found the array index in which to insert the new control TerrainPoint.
             // Exit now.
             break;
-         else if (inputValue == controlPoints[insertionPos].inputValue)
-            // Each control point is required to contain a unique input value, so
+         else if (inputValue == controlTerrainPoints[insertionPos].inputValue)
+            // Each control TerrainPoint is required to contain a unique input value, so
             // throw an exception.
             throw new ExceptionInvalidParam("Invalid Parameter in Curve");
       }
@@ -100,85 +100,85 @@ public class Curve extends ModuleBase
    public double getValue (double x, double y, double z)
    {
       assert (sourceModules[0] != null);
-      assert (controlPointCount >= 4);
+      assert (controlTerrainPointCount >= 4);
 
       // Get the output value from the source module.
       double sourceModuleValue = sourceModules[0].getValue (x, y, z);
 
-      // Find the first element in the control point array that has an input value
+      // Find the first element in the control TerrainPoint array that has an input value
       // larger than the output value from the source module.
       int indexPos;
-      for (indexPos = 0; indexPos < controlPointCount; indexPos++)
+      for (indexPos = 0; indexPos < controlTerrainPointCount; indexPos++)
       {
-         if (sourceModuleValue < controlPoints[indexPos].inputValue)
+         if (sourceModuleValue < controlTerrainPoints[indexPos].inputValue)
             break;
 
       }
 
-      // Find the four nearest control points so that we can perform cubic
+      // Find the four nearest control TerrainPoints so that we can perform cubic
       // interpolation.
-      int index0 = Misc.ClampValue (indexPos - 2, 0, controlPointCount - 1);
-      int index1 = Misc.ClampValue (indexPos - 1, 0, controlPointCount - 1);
-      int index2 = Misc.ClampValue (indexPos    , 0, controlPointCount - 1);
-      int index3 = Misc.ClampValue (indexPos + 1, 0, controlPointCount - 1);
+      int index0 = Misc.ClampValue (indexPos - 2, 0, controlTerrainPointCount - 1);
+      int index1 = Misc.ClampValue (indexPos - 1, 0, controlTerrainPointCount - 1);
+      int index2 = Misc.ClampValue (indexPos    , 0, controlTerrainPointCount - 1);
+      int index3 = Misc.ClampValue (indexPos + 1, 0, controlTerrainPointCount - 1);
 
-      // If some control points are missing (which occurs if the value from the
+      // If some control TerrainPoints are missing (which occurs if the value from the
       // source module is greater than the largest input value or less than the
-      // smallest input value of the control point array), get the corresponding
-      // output value of the nearest control point and exit now.
+      // smallest input value of the control TerrainPoint array), get the corresponding
+      // output value of the nearest control TerrainPoint and exit now.
       if (index1 == index2) {
-         return controlPoints[index1].outputValue;
+         return controlTerrainPoints[index1].outputValue;
       }
 
       // Compute the alpha value used for cubic interpolation.
-      double input0 = controlPoints[index1].inputValue;
-      double input1 = controlPoints[index2].inputValue;
+      double input0 = controlTerrainPoints[index1].inputValue;
+      double input1 = controlTerrainPoints[index2].inputValue;
       double alpha = (sourceModuleValue - input0) / (input1 - input0);
 
       // Now perform the cubic interpolation given the alpha value.
       return Interp.cubicInterp(
-            controlPoints[index0].outputValue,
-            controlPoints[index1].outputValue,
-            controlPoints[index2].outputValue,
-            controlPoints[index3].outputValue,
+            controlTerrainPoints[index0].outputValue,
+            controlTerrainPoints[index1].outputValue,
+            controlTerrainPoints[index2].outputValue,
+            controlTerrainPoints[index3].outputValue,
             alpha);
    }
 
    public void insertAtPos (int insertionPos, double inputValue,
          double outputValue)
    {
-      // Make room for the new control point at the specified position within the
-      // control point array.  The position is determined by the input value of
-      // the control point; the control points must be sorted by input value
+      // Make room for the new control TerrainPoint at the specified position within the
+      // control TerrainPoint array.  The position is determined by the input value of
+      // the control TerrainPoint; the control TerrainPoints must be sorted by input value
       // within that array.
-      ControlPoint[] newControlPoints = new ControlPoint[controlPointCount + 1];
+      ControlTerrainPoint[] newControlTerrainPoints = new ControlTerrainPoint[controlTerrainPointCount + 1];
       
-      for (int t = 0; t < (controlPointCount + 1); t++)
-         newControlPoints[t] = new ControlPoint();
+      for (int t = 0; t < (controlTerrainPointCount + 1); t++)
+         newControlTerrainPoints[t] = new ControlTerrainPoint();
       
-      for (int i = 0; i < controlPointCount; i++) {
+      for (int i = 0; i < controlTerrainPointCount; i++) {
          if (i < insertionPos) {
-            newControlPoints[i] = controlPoints[i];
+            newControlTerrainPoints[i] = controlTerrainPoints[i];
          } else {
-            newControlPoints[i + 1] = controlPoints[i];
+            newControlTerrainPoints[i + 1] = controlTerrainPoints[i];
          }
       }
 
-      controlPoints = newControlPoints;
-      ++controlPointCount;
+      controlTerrainPoints = newControlTerrainPoints;
+      ++controlTerrainPointCount;
 
-      // Now that we've made room for the new control point within the array, add
-      // the new control point.
-      controlPoints[insertionPos].inputValue  = inputValue;
-      controlPoints[insertionPos].outputValue = outputValue;
+      // Now that we've made room for the new control TerrainPoint within the array, add
+      // the new control TerrainPoint.
+      controlTerrainPoints[insertionPos].inputValue  = inputValue;
+      controlTerrainPoints[insertionPos].outputValue = outputValue;
    }
 }
 
 
-/// This class defines a control point.
+/// This class defines a control TerrainPoint.
 ///
-/// Control points are used for defining splines.
-class ControlPoint
+/// Control TerrainPoints are used for defining splines.
+class ControlTerrainPoint
 {
    /// The input value.
    double inputValue;
@@ -186,13 +186,13 @@ class ControlPoint
    /// The output value that is mapped from the input value.
    double outputValue;
    
-   ControlPoint()
+   ControlTerrainPoint()
    {
       inputValue = 0.0;
       outputValue = 0.0;
    }
    
-   ControlPoint(double inputValue, double outputValue)
+   ControlTerrainPoint(double inputValue, double outputValue)
    {
       this.inputValue = inputValue;
       this.outputValue = outputValue;

@@ -96,7 +96,7 @@ public class Billow extends ModuleBase
 
       for (int curOctave = 0; curOctave < octaveCount; curOctave++)
       {
-         // Make sure that these floating-point values have the same range as a 32-
+         // Make sure that these floating-TerrainPoint values have the same range as a 32-
          // bit integer so that we can pass them to the coherent-noise functions.
          nx = NoiseGen.MakeInt32Range (x);
          ny = NoiseGen.MakeInt32Range (y);

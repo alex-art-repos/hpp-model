@@ -33,12 +33,12 @@ public class GradientColor
    /// Defines a color gradient.
    ///
    /// A color gradient is a list of gradually-changing colors.  A color
-   /// gradient is defined by a list of <i>gradient points</i>.  Each
-   /// gradient point has a position and a color.  In a color gradient, the
-   /// colors between two adjacent gradient points are linearly interpolated.
+   /// gradient is defined by a list of <i>gradient TerrainPoints</i>.  Each
+   /// gradient TerrainPoint has a position and a color.  In a color gradient, the
+   /// colors between two adjacent gradient TerrainPoints are linearly interpolated.
    ///
-   /// To add a gradient point to the color gradient, pass its position and
-   /// color to the addGradientPoint() method.
+   /// To add a gradient TerrainPoint to the color gradient, pass its position and
+   /// color to the addGradientTerrainPoint() method.
    ///
    /// To retrieve a color from a specific position in the color gradient,
    /// pass that position to the getColor() method.
@@ -48,7 +48,7 @@ public class GradientColor
    ///
    /// <b>Gradient example</b>
    ///
-   /// Suppose a gradient object contains the following gradient points:
+   /// Suppose a gradient object contains the following gradient TerrainPoints:
    /// - -1.0 maps to black.
    /// - 0.0 maps to white.
    /// - 1.0 maps to red.
@@ -61,70 +61,70 @@ public class GradientColor
    /// between white and red.
 
 
-   GradientPoint [] gradientPoints;  
-   int gradientPointCount;
+   GradientPoint [] gradientTerrainPoints;  
+   int gradientTerrainPointCount;
    ColorCafe workingColor;
 
    public GradientColor()
    {
-      gradientPoints = new GradientPoint[1];
-      gradientPoints[0] =  new GradientPoint(0.0, new ColorCafe(0, 0, 0, 0));
+      gradientTerrainPoints = new GradientPoint[1];
+      gradientTerrainPoints[0] =  new GradientPoint(0.0, new ColorCafe(0, 0, 0, 0));
    }
 
-   /// Adds a gradient point to this gradient object.
+   /// Adds a gradient TerrainPoint to this gradient object.
    ///
-   /// @param gradientPos The position of this gradient point.
-   /// @param gradientColor The color of this gradient point.
+   /// @param gradientPos The position of this gradient TerrainPoint.
+   /// @param gradientColor The color of this gradient TerrainPoint.
    ///
-   /// @pre No two gradient points have the same position.
+   /// @pre No two gradient TerrainPoints have the same position.
    ///
    /// @throw noise::ExceptionInvalidParam See the precondition.
    ///
-   /// It does not matter which order these gradient points are added.
-   public void addGradientPoint (double gradientPos, ColorCafe gradientColor) throws ExceptionInvalidParam
+   /// It does not matter which order these gradient TerrainPoints are added.
+   public void addGradientTerrainPoint (double gradientPos, ColorCafe gradientColor) throws ExceptionInvalidParam
    {
-      // Find the insertion point for the new gradient point and insert the new
-      // gradient point at that insertion point.  The gradient point array will
+      // Find the insertion TerrainPoint for the new gradient TerrainPoint and insert the new
+      // gradient TerrainPoint at that insertion TerrainPoint.  The gradient TerrainPoint array will
       // remain sorted by gradient position.
       int insertionPos = findInsertionPos (gradientPos);
       insertAtPos (insertionPos, gradientPos, gradientColor);
    }
 
-   /// Deletes all the gradient points from this gradient object.
+   /// Deletes all the gradient TerrainPoints from this gradient object.
    ///
-   /// @post All gradient points from this gradient object are deleted.
+   /// @post All gradient TerrainPoints from this gradient object are deleted.
    public void clear ()
    {
-      gradientPoints = null;
-      gradientPointCount = 0;
+      gradientTerrainPoints = null;
+      gradientTerrainPointCount = 0;
    }
 
-   /// Determines the array index in which to insert the gradient point
-   /// into the internal gradient-point array.
+   /// Determines the array index in which to insert the gradient TerrainPoint
+   /// into the internal gradient-TerrainPoint array.
    ///
-   /// @param gradientPos The position of this gradient point.
+   /// @param gradientPos The position of this gradient TerrainPoint.
    ///
-   /// @returns The array index in which to insert the gradient point.
+   /// @returns The array index in which to insert the gradient TerrainPoint.
    ///
-   /// @pre No two gradient points have the same input value.
+   /// @pre No two gradient TerrainPoints have the same input value.
    ///
    /// @throw noise::ExceptionInvalidParam See the precondition.
    ///
-   /// By inserting the gradient point at the returned array index, this
-   /// object ensures that the gradient-point array is sorted by input
+   /// By inserting the gradient TerrainPoint at the returned array index, this
+   /// object ensures that the gradient-TerrainPoint array is sorted by input
    /// value.  The code that maps a value to a color requires a sorted
-   /// gradient-point array.
+   /// gradient-TerrainPoint array.
    public int findInsertionPos (double gradientPos) throws ExceptionInvalidParam
    {
       int insertionPos;
-      for (insertionPos = 0; insertionPos < gradientPointCount;
+      for (insertionPos = 0; insertionPos < gradientTerrainPointCount;
       insertionPos++) {
-         if (gradientPos < gradientPoints[insertionPos].position) {
-            // We found the array index in which to insert the new gradient point.
+         if (gradientPos < gradientTerrainPoints[insertionPos].position) {
+            // We found the array index in which to insert the new gradient TerrainPoint.
             // Exit now.
             break;
-         } else if (gradientPos == gradientPoints[insertionPos].position) {
-            // Each gradient point is required to contain a unique gradient
+         } else if (gradientPos == gradientTerrainPoints[insertionPos].position) {
+            // Each gradient TerrainPoint is required to contain a unique gradient
             // position, so throw an exception.
             throw new ExceptionInvalidParam ("Invalid Parameter in Gradient Color");
          }
@@ -139,113 +139,113 @@ public class GradientColor
    /// @returns The color at that position.
    public ColorCafe getColor (double gradientPos)
    {
-      assert (gradientPointCount >= 2);
+      assert (gradientTerrainPointCount >= 2);
 
-      // Find the first element in the gradient point array that has a gradient
+      // Find the first element in the gradient TerrainPoint array that has a gradient
       // position larger than the gradient position passed to this method.
       int indexPos;
-      for (indexPos = 0; indexPos < gradientPointCount; indexPos++)
+      for (indexPos = 0; indexPos < gradientTerrainPointCount; indexPos++)
       {
-         if (gradientPos < gradientPoints[indexPos].position)
+         if (gradientPos < gradientTerrainPoints[indexPos].position)
             break;
       }
 
-      // Find the two nearest gradient points so that we can perform linear
+      // Find the two nearest gradient TerrainPoints so that we can perform linear
       // interpolation on the color.
-      int index0 = Misc.ClampValue (indexPos - 1, 0, gradientPointCount - 1);
-      int index1 = Misc.ClampValue (indexPos, 0, gradientPointCount - 1);
+      int index0 = Misc.ClampValue (indexPos - 1, 0, gradientTerrainPointCount - 1);
+      int index1 = Misc.ClampValue (indexPos, 0, gradientTerrainPointCount - 1);
 
-      // If some gradient points are missing (which occurs if the gradient
+      // If some gradient TerrainPoints are missing (which occurs if the gradient
       // position passed to this method is greater than the largest gradient
       // position or less than the smallest gradient position in the array), get
-      // the corresponding gradient color of the nearest gradient point and exit
+      // the corresponding gradient color of the nearest gradient TerrainPoint and exit
       // now.
       if (index0 == index1)
       {
-         workingColor = gradientPoints[index1].color;
+         workingColor = gradientTerrainPoints[index1].color;
          return workingColor;
       }
 
       // Compute the alpha value used for linear interpolation.
-      double input0 = gradientPoints[index0].position;
-      double input1 = gradientPoints[index1].position;
+      double input0 = gradientTerrainPoints[index0].position;
+      double input1 = gradientTerrainPoints[index1].position;
       double alpha = (gradientPos - input0) / (input1 - input0);
 
       // Now perform the linear interpolation given the alpha value.
-      ColorCafe color0 = gradientPoints[index0].color;
-      ColorCafe color1 = gradientPoints[index1].color;
+      ColorCafe color0 = gradientTerrainPoints[index0].color;
+      ColorCafe color1 = gradientTerrainPoints[index1].color;
       workingColor = MiscUtilities.linearInterpColor (color0, color1, (float)alpha);
       return workingColor;
    }
 
-   /// Inserts the gradient point at the specified position in the
-   /// internal gradient-point array.
+   /// Inserts the gradient TerrainPoint at the specified position in the
+   /// internal gradient-TerrainPoint array.
    ///
    /// @param insertionPos The zero-based array position in which to
-   /// insert the gradient point.
-   /// @param gradientPos The position of this gradient point.
-   /// @param gradientColor The color of this gradient point.
+   /// insert the gradient TerrainPoint.
+   /// @param gradientPos The position of this gradient TerrainPoint.
+   /// @param gradientColor The color of this gradient TerrainPoint.
    ///
-   /// To make room for this new gradient point, this method reallocates
-   /// the gradient-point array and shifts all gradient points occurring
+   /// To make room for this new gradient TerrainPoint, this method reallocates
+   /// the gradient-TerrainPoint array and shifts all gradient TerrainPoints occurring
    /// after the insertion position up by one.
    ///
-   /// Because this object requires that all gradient points in the array
-   /// must be sorted by the position, the new gradient point should be
+   /// Because this object requires that all gradient TerrainPoints in the array
+   /// must be sorted by the position, the new gradient TerrainPoint should be
    /// inserted at the position in which the order is still preserved.
    public void insertAtPos (int insertionPos, double gradientPos,
          ColorCafe gradientColor)
    {
-      // Make room for the new gradient point at the specified insertion position
-      // within the gradient point array.  The insertion position is determined by
-      // the gradient point's position; the gradient points must be sorted by
+      // Make room for the new gradient TerrainPoint at the specified insertion position
+      // within the gradient TerrainPoint array.  The insertion position is determined by
+      // the gradient TerrainPoint's position; the gradient TerrainPoints must be sorted by
       // gradient position within that array.
-      GradientPoint [] newGradientPoints;
-      newGradientPoints = new GradientPoint[gradientPointCount + 1];
+      GradientPoint [] newGradientTerrainPoints;
+      newGradientTerrainPoints = new GradientPoint[gradientTerrainPointCount + 1];
       
-      for (int t = 0; t < (gradientPointCount + 1); t++)
-         newGradientPoints[t] = new GradientPoint();
+      for (int t = 0; t < (gradientTerrainPointCount + 1); t++)
+         newGradientTerrainPoints[t] = new GradientPoint();
       
       
       
-      for (int i = 0; i < gradientPointCount; i++)
+      for (int i = 0; i < gradientTerrainPointCount; i++)
       {
          if (i < insertionPos)
-            newGradientPoints[i] = gradientPoints[i];
+            newGradientTerrainPoints[i] = gradientTerrainPoints[i];
          else
-            newGradientPoints[i + 1] = gradientPoints[i];  
+            newGradientTerrainPoints[i + 1] = gradientTerrainPoints[i];  
       }
       
-      gradientPoints = newGradientPoints;
-      ++gradientPointCount;
+      gradientTerrainPoints = newGradientTerrainPoints;
+      ++gradientTerrainPointCount;
       
-      // Now that we've made room for the new gradient point within the array, add
-      // the new gradient point.
-      gradientPoints[insertionPos].position = gradientPos;
-      gradientPoints[insertionPos].color = gradientColor;
+      // Now that we've made room for the new gradient TerrainPoint within the array, add
+      // the new gradient TerrainPoint.
+      gradientTerrainPoints[insertionPos].position = gradientPos;
+      gradientTerrainPoints[insertionPos].color = gradientColor;
    }
 
-   /// Returns a pointer to the array of gradient points in this object.
+   /// Returns a TerrainPointer to the array of gradient TerrainPoints in this object.
    ///
-   /// @returns A pointer to the array of gradient points.
+   /// @returns A TerrainPointer to the array of gradient TerrainPoints.
    ///
-   /// Before calling this method, call getGradientPointCount() to
-   /// determine the number of gradient points in this array.
+   /// Before calling this method, call getGradientTerrainPointCount() to
+   /// determine the number of gradient TerrainPoints in this array.
    ///
-   /// It is recommended that an application does not store this pointer
-   /// for later use since the pointer to the array may change if the
+   /// It is recommended that an application does not store this TerrainPointer
+   /// for later use since the TerrainPointer to the array may change if the
    /// application calls another method of this object.
-   public GradientPoint[] getGradientPointArray ()
+   public GradientPoint[] getGradientTerrainPointArray ()
    {
-      return gradientPoints;
+      return gradientTerrainPoints;
    }
 
-   /// Returns the number of gradient points stored in this object.
+   /// Returns the number of gradient TerrainPoints stored in this object.
    ///
-   /// @returns The number of gradient points stored in this object.
-   public int getGradientPointCount ()
+   /// @returns The number of gradient TerrainPoints stored in this object.
+   public int getGradientTerrainPointCount ()
    {
-      return gradientPointCount;
+      return gradientTerrainPointCount;
    }
 
 }

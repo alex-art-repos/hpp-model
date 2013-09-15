@@ -45,9 +45,9 @@ public class RendererImage {
     /// position in the noise map.
     ///
     /// A color gradient is a list of gradually-changing colors.  A color
-    /// gradient is defined by a list of <i>gradient points</i>.  Each
-    /// gradient point has a position and a color.  In a color gradient, the
-    /// colors between two adjacent gradient points are linearly interpolated.
+    /// gradient is defined by a list of <i>gradient TerrainPoints</i>.  Each
+    /// gradient TerrainPoint has a position and a color.  In a color gradient, the
+    /// colors between two adjacent gradient TerrainPoints are linearly interpolated.
     ///
     /// For example, suppose this class contains the following color gradient:
     ///
@@ -63,14 +63,14 @@ public class RendererImage {
     /// The value -0.6 maps to a medium blue color because -0.6 is halfway
     /// between -1.0 (mapped to dark blue) and -0.2 (mapped to light blue).
     ///
-    /// The color gradient requires a minimum of two gradient points.
+    /// The color gradient requires a minimum of two gradient TerrainPoints.
     ///
     /// This class contains two pre-made gradients: a grayscale gradient and a
     /// color gradient suitable for terrain.  To use these pre-made gradients,
     /// call the buildGrayscaleGradient() or buildTerrainGradient() methods,
     /// respectively.
     ///
-    /// @note The color value passed to addGradientPoint() has an alpha
+    /// @note The color value passed to addGradientTerrainPoint() has an alpha
     /// channel.  This alpha channel specifies how a pixel in the background
     /// image (if specified) is blended with the calculated color.  If the
     /// alpha value is high, this class weighs the blend towards the
@@ -147,11 +147,11 @@ public class RendererImage {
     double lightElev;
     /// The intensity of the light source.
     double lightIntensity;
-    /// A pointer to the background image.
+    /// A TerrainPointer to the background image.
     ImageCafe backgroundImage;
-    /// A pointer to the destination image.
+    /// A TerrainPointer to the destination image.
     ImageCafe destImageCafe;
-    /// A pointer to the source noise map.
+    /// A TerrainPointer to the source noise map.
     NoiseMap sourceNoiseMap;
     /// Used by the calcLightIntensity() method to recalculate the light
     /// values only if the light parameters change.
@@ -182,12 +182,12 @@ public class RendererImage {
         buildGrayscaleGradient();
     }
 
-    /// Adds a gradient point to this gradient object.
+    /// Adds a gradient TerrainPoint to this gradient object.
     ///
-    /// @param gradientPos The position of this gradient point.
-    /// @param gradientColor The color of this gradient point.
+    /// @param gradientPos The position of this gradient TerrainPoint.
+    /// @param gradientColor The color of this gradient TerrainPoint.
     ///
-    /// @pre No two gradient points have the same position.
+    /// @pre No two gradient TerrainPoints have the same position.
     ///
     /// @throw noise::ExceptionInvalidParam See the preconditions.
     ///
@@ -195,7 +195,7 @@ public class RendererImage {
     /// pixel in the destination image according to the value from the
     /// corresponding position in the noise map.
     ///
-    /// The gradient requires a minimum of two gradient points.
+    /// The gradient requires a minimum of two gradient TerrainPoints.
     ///
     /// The specified color value passed to this method has an alpha
     /// channel.  This alpha channel specifies how a pixel in the
@@ -204,8 +204,8 @@ public class RendererImage {
     /// towards the calculated color, and if the alpha value is low, this
     /// object weighs the blend towards the color from the corresponding
     /// pixel in the background image.
-    public void addGradientPoint(double gradientPos, ColorCafe gradientColor) throws ExceptionInvalidParam {
-        gradient.addGradientPoint(gradientPos, gradientColor);
+    public void addGradientTerrainPoint(double gradientPos, ColorCafe gradientColor) throws ExceptionInvalidParam {
+        gradient.addGradientTerrainPoint(gradientPos, gradientColor);
     }
 
     /// Builds a grayscale gradient.
@@ -213,13 +213,13 @@ public class RendererImage {
     /// @post The original gradient is cleared and a grayscale gradient is
     /// created.
     ///
-    /// This color gradient contains the following gradient points:
+    /// This color gradient contains the following gradient TerrainPoints:
     /// - -1.0 maps to black
     /// - 1.0 maps to white
     public void buildGrayscaleGradient() throws ExceptionInvalidParam {
         clearGradient();
-        gradient.addGradientPoint(-1.0, new ColorCafe(0, 0, 0, 255));
-        gradient.addGradientPoint(1.0, new ColorCafe(255, 255, 255, 255));
+        gradient.addGradientTerrainPoint(-1.0, new ColorCafe(0, 0, 0, 255));
+        gradient.addGradientTerrainPoint(1.0, new ColorCafe(255, 255, 255, 255));
     }
 
     /// Builds a color gradient suitable for terrain.
@@ -232,15 +232,15 @@ public class RendererImage {
     /// Below that value, the gradient contains various shades of blue.
     public void buildTerrainGradient() throws ExceptionInvalidParam {
         clearGradient();
-        gradient.addGradientPoint(-1.00, new ColorCafe(0, 0, 128, 255));
-        gradient.addGradientPoint(-0.20, new ColorCafe(32, 64, 128, 255));
-        gradient.addGradientPoint(-0.04, new ColorCafe(64, 96, 192, 255));
-        gradient.addGradientPoint(-0.02, new ColorCafe(192, 192, 128, 255));
-        gradient.addGradientPoint(0.00, new ColorCafe(0, 192, 0, 255));
-        gradient.addGradientPoint(0.25, new ColorCafe(192, 192, 0, 255));
-        gradient.addGradientPoint(0.50, new ColorCafe(160, 96, 64, 255));
-        gradient.addGradientPoint(0.75, new ColorCafe(128, 255, 255, 255));
-        gradient.addGradientPoint(1.00, new ColorCafe(255, 255, 255, 255));
+        gradient.addGradientTerrainPoint(-1.00, new ColorCafe(0, 0, 128, 255));
+        gradient.addGradientTerrainPoint(-0.20, new ColorCafe(32, 64, 128, 255));
+        gradient.addGradientTerrainPoint(-0.04, new ColorCafe(64, 96, 192, 255));
+        gradient.addGradientTerrainPoint(-0.02, new ColorCafe(192, 192, 128, 255));
+        gradient.addGradientTerrainPoint(0.00, new ColorCafe(0, 192, 0, 255));
+        gradient.addGradientTerrainPoint(0.25, new ColorCafe(192, 192, 0, 255));
+        gradient.addGradientTerrainPoint(0.50, new ColorCafe(160, 96, 64, 255));
+        gradient.addGradientTerrainPoint(0.75, new ColorCafe(128, 255, 255, 255));
+        gradient.addGradientTerrainPoint(1.00, new ColorCafe(255, 255, 255, 255));
     }
 
     /// Calculates the destination color.
@@ -297,14 +297,14 @@ public class RendererImage {
 
     /// Calculates the intensity of the light given some elevation values.
     ///
-    /// @param center Elevation of the center point.
-    /// @param left Elevation of the point directly left of the center
-    /// point.
-    /// @param right Elevation of the point directly right of the center
-    /// point.
-    /// @param down Elevation of the point directly below the center
-    /// point.
-    /// @param up Elevation of the point directly above the center point.
+    /// @param center Elevation of the center TerrainPoint.
+    /// @param left Elevation of the TerrainPoint directly left of the center
+    /// TerrainPoint.
+    /// @param right Elevation of the TerrainPoint directly right of the center
+    /// TerrainPoint.
+    /// @param down Elevation of the TerrainPoint directly below the center
+    /// TerrainPoint.
+    /// @param up Elevation of the TerrainPoint directly above the center TerrainPoint.
     ///
     /// These values come directly from the noise map.
     public double calcLightIntensity(double center, double left,
@@ -339,7 +339,7 @@ public class RendererImage {
     /// Clears the color gradient.
     ///
     /// Before calling the render() method, the application must specify a
-    /// new color gradient with at least two gradient points.
+    /// new color gradient with at least two gradient TerrainPoints.
     public void clearGradient() {
         gradient = new GradientColor();
         gradient.clear();
@@ -350,8 +350,8 @@ public class RendererImage {
     ///
     /// @pre setSourceNoiseMap() has been previously called.
     /// @pre setDestImage() has been previously called.
-    /// @pre There are at least two gradient points in the color gradient.
-    /// @pre No two gradient points have the same position.
+    /// @pre There are at least two gradient TerrainPoints in the color gradient.
+    /// @pre No two gradient TerrainPoints have the same position.
     /// @pre If a background image was specified, it has the exact same
     /// size as the source height map.
     ///
@@ -367,7 +367,7 @@ public class RendererImage {
                 || destImageCafe == null
                 || sourceNoiseMap.getWidth() <= 0
                 || sourceNoiseMap.getHeight() <= 0
-                || gradient.getGradientPointCount() < 2) {
+                || gradient.getGradientTerrainPointCount() < 2) {
             throw new ExceptionInvalidParam("Invalid Parameter in RendererImage");
         }
 
@@ -394,15 +394,15 @@ public class RendererImage {
             ColorCafe background = new ColorCafe(255, 255, 255, 255);
 
             for (int x = 0; x < width; x++) {
-                // Get the color based on the value at the current point in the noise
+                // Get the color based on the value at the current TerrainPoint in the noise
                 // map.
                 ColorCafe destColor = gradient.getColor(sourceNoiseMap.getValue(x, y));
 
                 // If lighting is enabled, calculate the light intensity based on the
-                // rate of change at the current point in the noise map.
+                // rate of change at the current TerrainPoint in the noise map.
                 double lightIntensity;
                 if (isLightEnabled) {
-                    // Calculate the positions of the current point's four-neighbors.
+                    // Calculate the positions of the current TerrainPoint's four-neighbors.
                     int xLeftOffset, xRightOffset;
                     int yUpOffset, yDownOffset;
                     if (isWrapEnabled) {
@@ -451,7 +451,7 @@ public class RendererImage {
                         }
                     }
 
-                    // Get the noise value of the current point in the source noise map
+                    // Get the noise value of the current TerrainPoint in the source noise map
                     // and the noise values of its four-neighbors.
                     double nc = (double) (sourceNoiseMap.getValue(x, y));
                     double nl = (double) (sourceNoiseMap.getValue(x + xLeftOffset, y));
@@ -496,9 +496,9 @@ public class RendererImage {
     ///
     /// @param enable A flag that enables or disables noise-map wrapping.
     ///
-    /// This object requires five points (the initial point and its four
+    /// This object requires five TerrainPoints (the initial TerrainPoint and its four
     /// neighbors) to calculate light shading.  If wrapping is enabled,
-    /// and the initial point is on the edge of the noise map, the
+    /// and the initial TerrainPoint is on the edge of the noise map, the
     /// appropriate neighbors that lie outside of the noise map will
     /// "wrap" to the opposite side(s) of the noise map.  Otherwise, the
     /// appropriate neighbors are cropped to the edge of the noise map.
@@ -587,9 +587,9 @@ public class RendererImage {
     /// - @a true if noise-map wrapping is enabled.
     /// - @a false if noise-map wrapping is disabled.
     ///
-    /// This object requires five points (the initial point and its four
+    /// This object requires five TerrainPoints (the initial TerrainPoint and its four
     /// neighbors) to calculate light shading.  If wrapping is enabled,
-    /// and the initial point is on the edge of the noise map, the
+    /// and the initial TerrainPoint is on the edge of the noise map, the
     /// appropriate neighbors that lie outside of the noise map will
     /// "wrap" to the opposite side(s) of the noise map.  Otherwise, the
     /// appropriate neighbors are cropped to the edge of the noise map.

@@ -61,10 +61,10 @@ public class RendererNormalMap
    /// A flag specifying whether wrapping is enabled.
    boolean isWrapEnabled;
 
-   /// A pointer to the destination image.
+   /// A TerrainPointer to the destination image.
    ImageCafe destImageCafe;
 
-   /// A pointer to the source noise map.
+   /// A TerrainPointer to the source noise map.
    NoiseMap sourceNoiseMap;
 
 
@@ -84,9 +84,9 @@ public class RendererNormalMap
       sourceNoiseMap = new NoiseMap(height, width);
    }
 
-   /// Calculates the normal vector at a given point on the noise map.
+   /// Calculates the normal vector at a given TerrainPoint on the noise map.
    ///
-   /// @param nc The height of the given point in the noise map.
+   /// @param nc The height of the given TerrainPoint in the noise map.
    /// @param nr The height of the left neighbor.
    /// @param nu The height of the up neighbor.
    /// @param bumpHeight The bump height.
@@ -156,7 +156,7 @@ public class RendererNormalMap
       {
          for (int x = 0; x < width; x++)
          {
-            // Calculate the positions of the current point's right and up
+            // Calculate the positions of the current TerrainPoint's right and up
             // neighbors.
             int xRightOffset, yUpOffset;
             if (isWrapEnabled)
@@ -185,7 +185,7 @@ public class RendererNormalMap
 
             }
 
-            // Get the noise value of the current point in the source noise map
+            // Get the noise value of the current TerrainPoint in the source noise map
             // and the noise values of its right and up neighbors.
             double nc = (double)(sourceNoiseMap.getValue(x, y));
             double nr = (double)(sourceNoiseMap.getValue((x + xRightOffset),y));
@@ -194,7 +194,7 @@ public class RendererNormalMap
             // Calculate the normal product.
             destImageCafe.setValue(x,y, (calcNormalColor (nc, nr, nu, bumpHeight)));
 
-            // Go to the next point.
+            // Go to the next TerrainPoint.
             //++pSource;
             //++pDest;
          }
@@ -205,9 +205,9 @@ public class RendererNormalMap
    ///
    /// @param enable A flag that enables or disables noise-map wrapping.
    ///
-   /// This object requires three points (the initial point and the right
-   /// and up neighbors) to calculate the normal vector at that point.
-   /// If wrapping is/ enabled, and the initial point is on the edge of
+   /// This object requires three TerrainPoints (the initial TerrainPoint and the right
+   /// and up neighbors) to calculate the normal vector at that TerrainPoint.
+   /// If wrapping is/ enabled, and the initial TerrainPoint is on the edge of
    /// the noise map, the appropriate neighbors that lie outside of the
    /// noise map will "wrap" to the opposite side(s) of the noise map.
    /// Otherwise, the appropriate neighbors are cropped to the edge of
@@ -242,9 +242,9 @@ public class RendererNormalMap
    /// - @a true if noise-map wrapping is enabled.
    /// - @a false if noise-map wrapping is disabled.
    ///
-   /// This object requires three points (the initial point and the right
-   /// and up neighbors) to calculate the normal vector at that point.
-   /// If wrapping is/ enabled, and the initial point is on the edge of
+   /// This object requires three TerrainPoints (the initial TerrainPoint and the right
+   /// and up neighbors) to calculate the normal vector at that TerrainPoint.
+   /// If wrapping is/ enabled, and the initial TerrainPoint is on the edge of
    /// the noise map, the appropriate neighbors that lie outside of the
    /// noise map will "wrap" to the opposite side(s) of the noise map.
    /// Otherwise, the appropriate neighbors are cropped to the edge of

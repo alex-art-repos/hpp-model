@@ -42,8 +42,8 @@ public class ModuleBase
 
    public ModuleBase (int modulesRequired)
    {
-      // Create an array of pointers to all source modules required by this
-      // noise module.  Set these pointers to null.
+      // Create an array of TerrainPointers to all source modules required by this
+      // noise module.  Set these TerrainPointers to null.
       if(modulesRequired>0)
       {
          sourceModules = new ModuleBase[modulesRequired];

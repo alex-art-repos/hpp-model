@@ -45,15 +45,15 @@ public class RotatePoint extends ModuleBase
    ///
    /// This noise module requires one source module.
 
-   /// Default @a x rotation angle for the RotatePoint noise
+   /// Default @a x rotation angle for the RotateTerrainPoint noise
    /// module.
    static final double DEFAULT_ROTATE_X = 0.0;
 
-   /// Default @a y rotation angle for the RotatePoint noise
+   /// Default @a y rotation angle for the RotateTerrainPoint noise
    /// module.
    static final double DEFAULT_ROTATE_Y = 0.0;
 
-   /// Default @a z rotation angle for the RotatePoint noise
+   /// Default @a z rotation angle for the RotateTerrainPoint noise
    /// module.
    static final double DEFAULT_ROTATE_Z = 0.0;
 
