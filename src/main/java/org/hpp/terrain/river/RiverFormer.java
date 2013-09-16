@@ -48,6 +48,7 @@ public class RiverFormer {
             
             curHeight = terrain.getTerrainHeight(point);
             
+            log.debug("Points: " + lastTerrainPoint + ", " + point);
             lastHeight = riverModel.getHeight(lastTerrainPoint) == null ? Integer.MAX_VALUE : riverModel.getHeight(lastTerrainPoint);
             
             newHeight = Math.min(curHeight - deltaHeight, lastHeight - deltaHeight/2 );
@@ -62,6 +63,8 @@ public class RiverFormer {
             polygon.addPoint(point.getX() + halfWidth, point.getY());
             polygon.addPoint(point.getX() - halfWidth, point.getY());
 
+            riverModel.setHeight(point, newHeight);
+            
             int startX = Math.min(lastTerrainPoint.getX() - halfLastWidth, point.getX() - halfWidth),
                 stopX = Math.max(lastTerrainPoint.getX() + halfLastWidth, point.getX() + halfWidth);
             

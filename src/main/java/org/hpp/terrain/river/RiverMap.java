@@ -28,13 +28,26 @@ public class RiverMap {
         channelEdges.clear();
     }
     
-    public void addEdge(TerrainPoint TerrainPoint, int width) {
+    public void addEdge(RiverEdge edge) {
         if ( channelEdges.isEmpty() ) {
-            channelEdges.add( new RiverEdge(TerrainPoint, null, width) );
+            channelEdges.add( edge );
         } else {
-            channelEdges.get( channelEdges.size() - 1 ).setStop(TerrainPoint);
-            channelEdges.add( new RiverEdge(TerrainPoint, null, width) );
+            channelEdges.get( channelEdges.size() - 1 ).setStop(edge.getStart());
+            channelEdges.add( edge );
         }
+    }
+    
+    public RiverEdge addEdge(TerrainPoint point, int width) {
+        RiverEdge edge = new RiverEdge(point, null, width);
+        
+        if ( channelEdges.isEmpty() ) {
+            channelEdges.add( edge );
+        } else {
+            channelEdges.get( channelEdges.size() - 1 ).setStop(point);
+            channelEdges.add( edge );
+        }
+        
+        return edge;
     }
     
     public void removeEdge(RiverEdge edge) {
@@ -45,8 +58,8 @@ public class RiverMap {
         return channelEdges;
     }
     
-    public Integer getHeight(TerrainPoint TerrainPoint) {
-        return TerrainPointHeights.get(TerrainPoint);
+    public Integer getHeight(TerrainPoint point) {
+        return TerrainPointHeights.get(point);
     }
     
     public Integer getHeight(int x, int z) {
