@@ -47,7 +47,7 @@ dependencies {
     )
 }
 
-project.version = '1.0.0'
+project.version = '1.1.0'
 project.ext.version = project.version // save current version
 
 /**
@@ -110,7 +110,7 @@ jar.doFirst {
  **/
 task buildDist(type: Tar) {
     // remove version from WAR name
-    project.version = ''
+    // project.version = ''
     
     // baseName = project.ext.distNamePrefix
     
@@ -131,7 +131,7 @@ assemble.dependsOn 'buildDist'
 apply plugin: 'maven'
 
 artifacts {
-    archives (file('build/dist/' + project.name + '-' + project.version + '.tgz')) {
+    archives (file('build/dist/' + project.name + '.tgz')) {
         group 'org.hpp'
         name 'hpp-model'
         classifier 'dist'
