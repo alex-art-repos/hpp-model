@@ -36,6 +36,7 @@ public class App {
             public void run() {
                 MainForm frame = new MainForm();
                 frame.setVisible(true);
+                // frame.startup();
             }
         });
     }

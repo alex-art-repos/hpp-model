@@ -4,6 +4,8 @@
  */
 package org.hpp.terrain;
 
+import java.awt.Point;
+
 /**
  *
  * @author Gautama
@@ -36,7 +38,26 @@ public class TerrainPoint {
     public void setY(int y) {
         this.y = y;
     }
+    
+    public Point asPoint() {
+        return new Point(x, y);
+    }
+    
+    public static double distance(TerrainPoint point1, TerrainPoint point2) {
+        double x1 = point1.getX() - point2.getX();
+        double y1 = point1.getY() - point2.getY();
 
+        return Math.sqrt(x1 * x1 + y1 * y1);
+    }
+
+    public static double distance3D(TerrainPoint point1, int height1, TerrainPoint point2, int height2) {
+        double x1 = point1.getX() - point2.getX();
+        double y1 = point1.getY() - point2.getY();
+        double z1 = height1 - height2;
+
+        return Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

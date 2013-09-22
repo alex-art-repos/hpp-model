@@ -62,6 +62,10 @@ public class NoiseMap
       borderValue = 0.0;
    }
 
+    public NoiseMap() {
+        super();
+    }
+
    /// Returns a value from the specified position in the noise map.
    ///
    /// @param x The x coordinate of the position.
@@ -135,6 +139,14 @@ public class NoiseMap
       return width;
    }
 
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
    /// Sets the value to use for all positions outside of the noise map.
    ///
    /// @param borderValue The value to use for all positions outside of
@@ -146,5 +158,13 @@ public class NoiseMap
    {
       this.borderValue = borderValue;
    }
+
+    public double[][] getNoiseMap() {
+        return noiseMap;
+    }
+
+    public void setNoiseMap(double[][] noiseMap) {
+        this.noiseMap = noiseMap;
+    }
 
 }

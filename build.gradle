@@ -68,10 +68,16 @@ task copyToEnv(type: Copy) {
     from 'env'
 }
 
+task copyToModel(type: Copy) {
+    into "$buildDir/libs"
+    from 'model'
+}
+
 task buildExecutor
 buildExecutor.dependsOn 'copyToLib'
 buildExecutor.dependsOn 'copyToCfg'
 buildExecutor.dependsOn 'copyToEnv'
+buildExecutor.dependsOn 'copyToModel'
 
 jar.dependsOn 'buildExecutor'
 
@@ -103,6 +109,10 @@ jar.doFirst {
             'Class-path': classPath
         )
     }
+}
+
+test {
+    testLogging.showStandardStreams = true    
 }
 
 /**

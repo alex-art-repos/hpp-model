@@ -4,32 +4,53 @@
  */
 package org.hpp.model;
 
-import org.hpp.terrain.TerrainMap;
+import java.io.File;
+import java.io.FileReader;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Properties;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.hpp.terrain.TerrainModel;
+import org.hpp.terrain.TerrainPoint;
+import org.hpp.terrain.river.RiverModel;
+import org.hpp.terrain.town.TownModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gautama
  */
+@XmlRootElement
 public class HppModel {
-    private TerrainMap heightMap = null;
+    @XmlTransient
+    private static Logger log = LoggerFactory.getLogger(HppModel.class);
+    
+    public static final String DEF_FILE_NAME = "hpp-model.xml";
+    
+    private TerrainModel terrain = null;
+    private RiverModel river = null;
+    private TownModel town = null;
 
-    private int scale = 5; // TerrainPoint from each other 5m
+    private double Pmin = 0; // Watt
+    private double Pmax = 0; // Watt
     
-    private double minP = 0; // Watt
-    private double maxP = 0; // Watt
+    private double Cap_user = 0; // МВт 
     
-    // avg power consume (by hour)
+    private double Dmax = 0; // distance in km
     
-    private double maxD = 0; // distance in km
+    private double Cost = 0; // mln rub, Cost >= 25*Pmin
     
-    private double maxProjectCost = 0; // mln rub, Cost >= 25*Pmin
+    private double rate = 0; // m^3/s
     
-    // avg year consume m^3/s
+    private double Rate_min = 0.5; // m^3/s
+    private double Rate_max = 20; // m^3/s
     
-    private double minRate = 0.5; // m^3/s
-    private double maxRate = 20; // m^3/s
-    
-    private double stokV = 0; // V_stok (=0,1 default), %
+    private double Vstok = 0; // V_stok (=0,1 default), %
     
     private int maxCountRD = 10;
     private int maxCountRF = 10;
@@ -41,7 +62,6 @@ public class HppModel {
     
     private double efficHP = 0.5;
     
-    //wD,wL,wS,wk,wc,wTc (=1default)
     private double wD = 1;
     private double wL = 1;
     private double wS = 1;
@@ -49,80 +69,126 @@ public class HppModel {
     private double wc = 1;
     private double wTc = 1;
     
+    public static final String RATE_MIDDLE_DAY_FILE = "Rate_middleday.props";
+    public static final String DAY_PREFIX = "day";
+    private double Rate_midleday[] = null; // 365  values
+    
+    private double Rate_dbmiddle = 8.5291972;
+    
+    private double cp1 = 0;
+    private double cp2 = 0;
+    private double cp3 = 0;
+    private double cp4 = 0;
+    private double cp5 = 0;
+    
+    private double co1 = 0;
+    private double co2 = 0;
+    private double co3 = 0;
+    private double co4 = 0;
+
+    public static final double G = 9.8; // g - gravitation const
+    
     public HppModel() {
         super();
     }
 
-    public TerrainMap getTerrainMap() {
-        return heightMap;
+    @XmlTransient
+    public TerrainModel getTerrainModel() {
+        return terrain;
     }
 
-    public void setTerrainMap(TerrainMap heightMap) {
-        this.heightMap = heightMap;
+    public void setTerrainModel(TerrainModel heightMap) {
+        this.terrain = heightMap;
     }
 
-    public int getScale() {
-        return scale;
+    @XmlTransient
+    public RiverModel getRiverModel() {
+        return river;
     }
 
-    public void setScale(int scale) {
-        this.scale = scale;
+    public void setRiverModel(RiverModel riverMap) {
+        this.river = riverMap;
     }
 
-    public double getMinP() {
-        return minP;
+    public TownModel getTownModel() {
+        return town;
     }
 
-    public void setMinP(double minP) {
-        this.minP = minP;
+    public void setTownModel(TownModel town) {
+        this.town = town;
     }
 
-    public double getMaxP() {
-        return maxP;
+    public double getPmin() {
+        return Pmin;
     }
 
-    public void setMaxP(double maxP) {
-        this.maxP = maxP;
+    public void setPmin(double Pmin) {
+        this.Pmin = Pmin;
     }
 
-    public double getMaxD() {
-        return maxD;
+    public double getPmax() {
+        return Pmax;
     }
 
-    public void setMaxD(double maxD) {
-        this.maxD = maxD;
+    public void setPmax(double Pmax) {
+        this.Pmax = Pmax;
     }
 
-    public double getMaxProjectCost() {
-        return maxProjectCost;
+    public double getDmax() {
+        return Dmax;
     }
 
-    public void setMaxProjectCost(double maxProjectCost) {
-        this.maxProjectCost = maxProjectCost;
+    public void setDmax(double Dmax) {
+        this.Dmax = Dmax;
     }
 
-    public double getMinRate() {
-        return minRate;
+    public double getCost() {
+        return Cost;
     }
 
-    public void setMinRate(double minRate) {
-        this.minRate = minRate;
+    public void setCost(double Cost) {
+        this.Cost = Cost;
     }
 
-    public double getMaxRate() {
-        return maxRate;
+    public double getRate_min() {
+        return Rate_min;
     }
 
-    public void setMaxRate(double maxRate) {
-        this.maxRate = maxRate;
+    public void setRate_min(double Rate_min) {
+        this.Rate_min = Rate_min;
     }
 
-    public double getStokV() {
-        return stokV;
+    public double getRate_max() {
+        return Rate_max;
     }
 
-    public void setStokV(double stokV) {
-        this.stokV = stokV;
+    public void setRate_max(double Rate_max) {
+        this.Rate_max = Rate_max;
+    }
+
+    public double getVstok() {
+        return Vstok;
+    }
+
+    public void setVstok(double Vstok) {
+        this.Vstok = Vstok;
+    }
+
+    @XmlTransient
+    public double[] getRate_midleday() {
+        return Rate_midleday;
+    }
+
+    public void setRate_midleday(double[] Rate_midleday) {
+        this.Rate_midleday = Rate_midleday;
+    }
+
+    public double getRate_dbmiddle() {
+        return Rate_dbmiddle;
+    }
+
+    public void setRate_dbmiddle(double Rate_dbmiddle) {
+        this.Rate_dbmiddle = Rate_dbmiddle;
     }
 
     public int getMaxCountRD() {
@@ -221,4 +287,200 @@ public class HppModel {
         this.wTc = wTc;
     }
 
+    public double getCap_user() {
+        return Cap_user;
+    }
+
+    public void setCap_user(double Cap_user) {
+        this.Cap_user = Cap_user;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
+    public double getCp1() {
+        return cp1;
+    }
+
+    public void setCp1(double cp1) {
+        this.cp1 = cp1;
+    }
+
+    public double getCp2() {
+        return cp2;
+    }
+
+    public void setCp2(double cp2) {
+        this.cp2 = cp2;
+    }
+
+    public double getCp3() {
+        return cp3;
+    }
+
+    public void setCp3(double cp3) {
+        this.cp3 = cp3;
+    }
+
+    public double getCp4() {
+        return cp4;
+    }
+
+    public void setCp4(double cp4) {
+        this.cp4 = cp4;
+    }
+
+    public double getCp5() {
+        return cp5;
+    }
+
+    public void setCp5(double cp5) {
+        this.cp5 = cp5;
+    }
+
+    public double getCo1() {
+        return co1;
+    }
+
+    public void setCo1(double co1) {
+        this.co1 = co1;
+    }
+
+    public double getCo2() {
+        return co2;
+    }
+
+    public void setCo2(double co2) {
+        this.co2 = co2;
+    }
+
+    public double getCo3() {
+        return co3;
+    }
+
+    public void setCo3(double co3) {
+        this.co3 = co3;
+    }
+
+    public double getCo4() {
+        return co4;
+    }
+
+    public void setCo4(double co4) {
+        this.co4 = co4;
+    }
+    
+    /**
+     * Convert distance in pixel according current scale.
+     * 
+     * @param value distance in pixel
+     * @return
+     */
+    public double toKm(double value) {
+        if ( terrain == null ) {
+            throw new NullPointerException("No terrain model.");
+        }
+        
+        return value * terrain.getPixelScale() / 1000f;
+    }
+
+    /**
+     * Convert to distance in pixel.
+     * 
+     * @param value distance in meters
+     * @return distance in pixel
+     */
+    public double toPx(double value) {
+        if ( terrain == null ) {
+            throw new NullPointerException("No terrain model.");
+        }
+        
+        return value / terrain.getPixelScale();
+    }
+    
+    public double kmToPx(double value) {
+        return this.toPx(1000 * value);
+    }
+    
+    public void saveToFile(String fileName, boolean bIsFull) throws Exception {
+        JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
+        
+        Marshaller marshaller = ctx.createMarshaller();
+        
+        marshaller.setProperty( Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        
+        marshaller.marshal(this, new File(fileName == null ? DEF_FILE_NAME : fileName));
+        
+        if ( bIsFull ) {
+            if ( river != null ) {
+                river.saveToFile(null);
+            }
+
+            if ( terrain != null ) {
+                terrain.saveToFile(null);
+            }
+        }
+    }
+    
+    public static HppModel loadFromFile(String fileName, boolean bIsFull) throws Exception {
+        JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
+        
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        
+        HppModel model = (HppModel)unmarshaller.unmarshal(new File(fileName == null ? DEF_FILE_NAME : fileName));
+        
+        double days[] = loadRateMiddleDayFromFile(RATE_MIDDLE_DAY_FILE);
+        
+        model.setRate_midleday(days);
+        
+        if ( bIsFull ) {
+            model.setRiverModel(RiverModel.loadFromFile(null));
+
+            model.setTerrainModel( TerrainModel.loadFromFile(null));
+        }
+        
+        return model;
+    }
+    
+    public static double[] loadRateMiddleDayFromFile(String fileName) throws Exception {
+        File file = new File(fileName == null ? RATE_MIDDLE_DAY_FILE : fileName);
+        
+        if ( !file.exists() ) {
+            log.debug("No rate middle day file : " + fileName);
+            return null;
+        }
+        
+        Properties props = new Properties();
+        
+        try (FileReader reader = new FileReader( file )) {
+            props.load( reader );
+        }
+        
+        double days[] = new double[365];
+        
+        int count = 0;
+        for (String name : props.stringPropertyNames()) {
+            if ( !name.startsWith(DAY_PREFIX) ) {
+                continue;
+            }
+            
+            int dayNum = Integer.parseInt( name.substring( DAY_PREFIX.length() ) );
+            DecimalFormat format = new DecimalFormat(".00###");
+            DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+            symbols.setDecimalSeparator(',');
+            format.setDecimalFormatSymbols(symbols);
+            days[dayNum-1] = format.parse( props.getProperty(name) ).doubleValue();
+            
+            count ++;
+        }
+        log.debug("Loaded from (" + fileName + ") " + count + " values.");
+        
+        return days;
+    }
 }
