@@ -47,7 +47,7 @@ dependencies {
     )
 }
 
-project.version = '1.0.0'
+project.version = '1.2.0'
 project.ext.version = project.version // save current version
 
 /**
@@ -141,7 +141,7 @@ assemble.dependsOn 'buildDist'
 apply plugin: 'maven'
 
 artifacts {
-    archives (file('build/dist/' + project.name + '-' + project.version + '.tgz')) {
+    archives (file('build/dist/' + project.name + '.tgz')) { // + '-' + project.version 
         group 'org.hpp'
         name 'hpp-model'
         classifier 'dist'
@@ -155,7 +155,14 @@ uploadArchives {
     }
 }
 
+task restoreVersion {
+    doFirst {
+        project.version = project.ext.version
+    }
+}
+
 uploadArchives.dependsOn = [] // prevent publish subprojects
+uploadArchives.dependsOn restoreVersion
 // uploadArchives.dependsOn 'updateVersionForUploadMode'
 
 task uploadExport
