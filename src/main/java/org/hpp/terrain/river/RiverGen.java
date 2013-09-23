@@ -4,9 +4,9 @@
  */
 package org.hpp.terrain.river;
 
-import java.util.Random;
-import org.hpp.terrain.TerrainMap;
+import org.hpp.terrain.TerrainModel;
 import org.hpp.terrain.TerrainPoint;
+import org.hpp.utils.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * @author Gautama
  */
 public class RiverGen {
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    public static final Logger log = LoggerFactory.getLogger(RiverGen.class);
 
     private int minEdgeLen = 0;
     private int maxEdgeLen = 0;
@@ -26,12 +26,7 @@ public class RiverGen {
     private int minWidth = 0;
     private int maxWidth = 0;
     
-    private int minHeightDelta = 0;
-    private int maxHeightDelta = 0;
-    
     private int maxErrorThreshold = 3;
-    
-    private Random rnd = new Random(System.nanoTime());
     
     public RiverGen() {
         super();
@@ -85,22 +80,6 @@ public class RiverGen {
         this.maxWidth = maxWidth;
     }
 
-    public int getMinHeightDelta() {
-        return minHeightDelta;
-    }
-
-    public void setMinHeightDelta(int minHeightDelta) {
-        this.minHeightDelta = minHeightDelta;
-    }
-
-    public int getMaxHeightDelta() {
-        return maxHeightDelta;
-    }
-
-    public void setMaxHeightDelta(int maxHeightDelta) {
-        this.maxHeightDelta = maxHeightDelta;
-    }
-
     public int getMaxErrorThreshold() {
         return maxErrorThreshold;
     }
@@ -109,7 +88,7 @@ public class RiverGen {
         this.maxErrorThreshold = maxErrorThreshold;
     }
 
-    public RiverMap genRiver(TerrainPoint startPos, TerrainMap terrainMap) {
+    public RiverModel genRiver(TerrainPoint startPos, TerrainModel terrainMap) {
         int angle = 0;
         boolean leftTurn = false;
         
@@ -118,19 +97,17 @@ public class RiverGen {
         int errors = 0;
         
         TerrainPoint lastTerrainPoint = startPos, newTerrainPoint = null;
-        RiverMap river = new RiverMap();
+        RiverModel river = new RiverModel();
         
-        edgeWidth = this.randomInRange(minWidth, maxWidth);
+        edgeWidth = RandomUtil.randomInRange(minWidth, maxWidth);
         river.addEdge(startPos, edgeWidth);
         
-        log.debug("CurPos =" + startPos + ", w=" + edgeWidth);
-        
         do {
-            angle = this.randomInRange(minAngle, maxAngle);
-            leftTurn = this.randomBool();
+            angle = RandomUtil.randomInRange(minAngle, maxAngle);
+            leftTurn = RandomUtil.randomBool();
 
-            edgeLen = this.randomInRange(minEdgeLen, maxEdgeLen);
-            edgeWidth = this.randomInRange(minWidth, maxWidth);
+            edgeLen = RandomUtil.randomInRange(minEdgeLen, maxEdgeLen);
+            edgeWidth = RandomUtil.randomInRange(minWidth, maxWidth);
 
             double deltaX = edgeLen * Math.sin(Math.toRadians(angle));
             double deltaY = edgeLen * Math.cos(Math.toRadians(angle));
@@ -143,7 +120,6 @@ public class RiverGen {
                         new Double(lastTerrainPoint.getY() + deltaY).intValue());
             }
             
-            log.debug("CurPos =" + newTerrainPoint + ", w=" + edgeWidth);
             if ( newTerrainPoint.equals(lastTerrainPoint) ) {
                 errors ++;
                 if ( errors > maxErrorThreshold ) {
@@ -156,6 +132,24 @@ public class RiverGen {
 
             if ( ( newTerrainPoint.getX() >= terrainMap.getMapWidth() || newTerrainPoint.getX() <= 0 ) 
                 || ( newTerrainPoint.getY() >= terrainMap.getMapHeight() || newTerrainPoint.getY() <= 0 ) ) {
+                
+                if ( newTerrainPoint.getX() >= terrainMap.getMapWidth() ) {
+                    newTerrainPoint.setX( terrainMap.getMapWidth() - 1 );
+                }
+                
+                if ( newTerrainPoint.getX() <= 0 ) {
+                    newTerrainPoint.setX( 0 );
+                }
+                
+                if ( newTerrainPoint.getY() >= terrainMap.getMapHeight() ) {
+                    newTerrainPoint.setY( terrainMap.getMapHeight() - 1 );
+                }
+                
+                if ( newTerrainPoint.getY() <= 0 ) {
+                    newTerrainPoint.setY( 0 );
+                }
+                
+                river.addEdge(newTerrainPoint, edgeWidth);
                 newTerrainPoint = null;
             } else {
                 river.addEdge(newTerrainPoint, edgeWidth);
@@ -169,16 +163,91 @@ public class RiverGen {
         return river;
     }
     
-    protected int randomInRange(int min, int max) {
-        return min + rnd.nextInt(max - min);
+    public RiverModel genNaturalRiver(TerrainPoint startPos, TerrainModel terrain) {
+        int edgeWidth = 0;
+        
+        int errors = 0;
+        
+        int potentialPoints = 10;
+        
+        TerrainPoint lastTerrainPoint = startPos, newTerrainPoint = null;
+        RiverModel river = new RiverModel();
+        
+        edgeWidth = RandomUtil.randomInRange(minWidth, maxWidth);
+        
+        int curX = lastTerrainPoint.getX(), chosenX = curX;
+        int curY = lastTerrainPoint.getY();
+
+        for (int i = curX - potentialPoints*2; i < curX + potentialPoints*2 ; i++) {
+            if ( !terrain.contains(i, curY) ) {
+                continue;
+            }
+
+            if ( terrain.getTerrainHeight(i, curY) < terrain.getTerrainHeight(chosenX, curY) ) {
+                chosenX = i;
+            }
+        }
+        lastTerrainPoint = new TerrainPoint(chosenX, curY);
+        river.addEdge(lastTerrainPoint, edgeWidth);
+        
+        do {
+            edgeWidth = RandomUtil.randomInRange(minWidth, maxWidth);
+            
+            curX = lastTerrainPoint.getX();
+            chosenX = curX;
+            curY = lastTerrainPoint.getY();
+            
+            for (int i = curX - (potentialPoints/2); i < curX + (potentialPoints/2) ; i++) {
+                if ( !terrain.contains(i, curY + 1) ) {
+                    continue;
+                }
+                
+                if ( terrain.getTerrainHeight(i, curY + 1) < terrain.getTerrainHeight(chosenX, curY + 1) ) {
+                    chosenX = i;
+                }
+            }
+
+            newTerrainPoint = new TerrainPoint(chosenX, curY + 1);
+            
+            if ( newTerrainPoint.equals(lastTerrainPoint) ) {
+                errors ++;
+                if ( errors > maxErrorThreshold ) {
+                    break;
+                }
+                continue;
+            }
+            
+            lastTerrainPoint = newTerrainPoint;
+
+            if ( !terrain.contains(newTerrainPoint) ) {
+                
+                if ( newTerrainPoint.getX() >= terrain.getMapWidth() ) {
+                    newTerrainPoint.setX( terrain.getMapWidth() - 1 );
+                }
+                
+                if ( newTerrainPoint.getX() <= 0 ) {
+                    newTerrainPoint.setX( 0 );
+                }
+                
+                if ( newTerrainPoint.getY() >= terrain.getMapHeight() ) {
+                    newTerrainPoint.setY( terrain.getMapHeight() - 1 );
+                }
+                
+                if ( newTerrainPoint.getY() <= 0 ) {
+                    newTerrainPoint.setY( 0 );
+                }
+                
+                river.addEdge(newTerrainPoint, edgeWidth);
+                newTerrainPoint = null;
+            } else {
+                river.addEdge(newTerrainPoint, edgeWidth);
+            }
+        } while(newTerrainPoint != null);
+        
+        if ( errors > maxErrorThreshold ) {
+            return null;
+        }
+        
+        return river;
     }
-    
-    protected int randomGaussInRange(int min, int max) {
-        return min + new Double((max-min) * Math.abs(rnd.nextGaussian())).intValue();
-    }
-    
-    protected boolean randomBool() {
-        return rnd.nextBoolean();
-    }
-    
 }

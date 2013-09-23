@@ -4,7 +4,6 @@
  */
 package org.hpp.terrain.river;
 
-import java.util.List;
 import org.hpp.terrain.TerrainPoint;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -43,7 +42,7 @@ public class RiverMapTest {
      */
     @Test
     public void testClearEdges() {
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         instance.clearEdges();
         
         assertNotNull(instance.edges());
@@ -57,7 +56,7 @@ public class RiverMapTest {
     public void testAddEdge() {
         TerrainPoint point = new TerrainPoint(100, 25);
         int width = 150;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         instance.addEdge(point, width);
         
         assertNotNull( instance.edges() );
@@ -70,7 +69,7 @@ public class RiverMapTest {
     public void testAddEdge_Edge() {
         TerrainPoint point = new TerrainPoint(100, 25);
         int width = 150;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         RiverEdge edge = new RiverEdge(point, null, width);
         instance.addEdge( edge );
         
@@ -88,7 +87,7 @@ public class RiverMapTest {
         TerrainPoint point = new TerrainPoint(100, 25);
         int width = 150;
         
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         RiverEdge edge = instance.addEdge(point, width);
         
         instance.removeEdge(edge);
@@ -101,7 +100,7 @@ public class RiverMapTest {
      */
     @Test
     public void testEdges() {
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         
         assertNotNull(instance.edges());
         assertTrue(instance.edges().isEmpty());
@@ -113,7 +112,7 @@ public class RiverMapTest {
     @Test
     public void testGetHeight_TerrainPoint() {
         TerrainPoint point = new TerrainPoint(100, 51);
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         Integer expResult = 1200200;
         instance.setHeight(point, expResult);
         Integer result = instance.getHeight(point);
@@ -128,7 +127,7 @@ public class RiverMapTest {
     public void testGetHeight_int_int() {
         int x = 150;
         int z = 200;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         Integer result = instance.getHeight(x, z);
         assertNull(result);
     }
@@ -138,7 +137,7 @@ public class RiverMapTest {
         int x = 150;
         int z = 200;
         int height = 12500;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         instance.setHeight(x, z, height);
         Integer result = instance.getHeight(x, z);
         
@@ -153,7 +152,7 @@ public class RiverMapTest {
         int x = 150;
         int z = 330;
         int height = 1000;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         instance.setHeight(x, z, height);
         Integer newHeight = instance.getHeight(x, z);
         
@@ -167,7 +166,7 @@ public class RiverMapTest {
     public void testSetHeight_TerrainPoint_int() {
         TerrainPoint thePoint = new TerrainPoint(1500, 25400);
         int height = 15040;
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         
         instance.setHeight(thePoint, height);
         
@@ -184,7 +183,7 @@ public class RiverMapTest {
         
         TerrainPoint thePoint = new TerrainPoint(x, y);
         
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         
         instance.setHeight(x, y, height);
         
@@ -201,7 +200,7 @@ public class RiverMapTest {
         
         TerrainPoint thePoint = new TerrainPoint(x, y);
         
-        RiverMap instance = new RiverMap();
+        RiverModel instance = new RiverModel();
         
         instance.setHeight(thePoint, height);
         

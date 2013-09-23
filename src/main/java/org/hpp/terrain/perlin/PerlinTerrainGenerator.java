@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @author Gautama
  */
 public class PerlinTerrainGenerator {
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(PerlinTerrainGenerator.class);
     
     protected Perlin perlin = new Perlin();
 

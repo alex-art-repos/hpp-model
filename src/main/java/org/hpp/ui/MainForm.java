@@ -19,6 +19,10 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
     }
+    
+    public void startup() {
+        // formCtrl.startup();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,20 +35,39 @@ public class MainForm extends javax.swing.JFrame {
 
         mainSplit = new javax.swing.JSplitPane();
         inputParamPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        inputValueTab = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        syncInputToModel = new javax.swing.JButton();
         modelPanel = new javax.swing.JPanel();
         modelSplit = new javax.swing.JSplitPane();
         mapScrollPane = new javax.swing.JScrollPane();
         mapPanelBackground = new javax.swing.JPanel();
+        mapScroll = new javax.swing.JScrollPane();
         mapPanel = new org.hpp.ui.component.MapPanel();
+        jLabel2 = new javax.swing.JLabel();
+        curHeightLab = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        block1Btn = new javax.swing.JButton();
+        startAlgoBtn = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        algoStatusField = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        algorithmValueTab = new javax.swing.JTable();
+        showTownRadiusBtn = new javax.swing.JButton();
         outputParamPanel = new javax.swing.JPanel();
         mainMenu = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        newModelItem = new javax.swing.JMenuItem();
+        loadModelItem = new javax.swing.JMenuItem();
+        saveModelItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenu = new javax.swing.JMenuItem();
         mapMenu = new javax.swing.JMenu();
         genMapMenu = new javax.swing.JMenuItem();
         saveMapMenu = new javax.swing.JMenuItem();
+        saveScreenShotItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Hydropower plant model");
@@ -54,15 +77,54 @@ public class MainForm extends javax.swing.JFrame {
         mainSplit.setDividerSize(10);
         mainSplit.setOneTouchExpandable(true);
 
+        inputValueTab.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        inputValueTab.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                inputValueTabPropertyChange(evt);
+            }
+        });
+        jScrollPane1.setViewportView(inputValueTab);
+
+        jLabel1.setText("Input values");
+
+        syncInputToModel.setText("refresh");
+        syncInputToModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                syncInputToModelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout inputParamPanelLayout = new javax.swing.GroupLayout(inputParamPanel);
         inputParamPanel.setLayout(inputParamPanelLayout);
         inputParamPanelLayout.setHorizontalGroup(
             inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 149, Short.MAX_VALUE)
+            .addGroup(inputParamPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(syncInputToModel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         inputParamPanelLayout.setVerticalGroup(
             inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 551, Short.MAX_VALUE)
+            .addGroup(inputParamPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(syncInputToModel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
         );
 
         mainSplit.setLeftComponent(inputParamPanel);
@@ -71,32 +133,132 @@ public class MainForm extends javax.swing.JFrame {
         modelSplit.setDividerSize(10);
         modelSplit.setOneTouchExpandable(true);
 
-        mapPanel.setAutoscrolls(true);
+        mapScroll.setAutoscrolls(true);
+
+        mapPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mapPanelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
         mapPanel.setLayout(mapPanelLayout);
         mapPanelLayout.setHorizontalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 402, Short.MAX_VALUE)
+            .addGap(0, 461, Short.MAX_VALUE)
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 403, Short.MAX_VALUE)
+            .addGap(0, 421, Short.MAX_VALUE)
         );
+
+        mapScroll.setViewportView(mapPanel);
+
+        jLabel2.setText("Current height:");
+
+        curHeightLab.setText("0");
+
+        jLabel4.setText("m");
+
+        block1Btn.setText("block1");
+        block1Btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                block1BtnActionPerformed(evt);
+            }
+        });
+
+        startAlgoBtn.setText("start -->");
+        startAlgoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startAlgoBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Algorithm");
+
+        algoStatusField.setText("status");
+        algoStatusField.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        algorithmValueTab.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        algorithmValueTab.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                algorithmValueTabPropertyChange(evt);
+            }
+        });
+        jScrollPane2.setViewportView(algorithmValueTab);
+
+        showTownRadiusBtn.setText("town radius");
+        showTownRadiusBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTownRadiusBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout mapPanelBackgroundLayout = new javax.swing.GroupLayout(mapPanelBackground);
         mapPanelBackground.setLayout(mapPanelBackgroundLayout);
         mapPanelBackgroundLayout.setHorizontalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mapScroll)
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                .addComponent(mapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 43, Short.MAX_VALUE))
+                .addComponent(jSeparator2)
+                .addContainerGap())
+            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                        .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(curHeightLab)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(showTownRadiusBtn))
+                            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(algoStatusField, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                                .addComponent(startAlgoBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(block1Btn)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         mapPanelBackgroundLayout.setVerticalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                .addComponent(mapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 142, Short.MAX_VALUE))
+                .addComponent(mapScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(curHeightLab)
+                    .addComponent(jLabel4)
+                    .addComponent(showTownRadiusBtn))
+                .addGap(2, 2, 2)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(algoStatusField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(startAlgoBtn)
+                    .addComponent(block1Btn))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         mapScrollPane.setViewportView(mapPanelBackground);
@@ -107,11 +269,11 @@ public class MainForm extends javax.swing.JFrame {
         outputParamPanel.setLayout(outputParamPanelLayout);
         outputParamPanelLayout.setHorizontalGroup(
             outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 116, Short.MAX_VALUE)
+            .addGap(0, 108, Short.MAX_VALUE)
         );
         outputParamPanelLayout.setVerticalGroup(
             outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 549, Short.MAX_VALUE)
+            .addGap(0, 717, Short.MAX_VALUE)
         );
 
         modelSplit.setRightComponent(outputParamPanel);
@@ -120,7 +282,7 @@ public class MainForm extends javax.swing.JFrame {
         modelPanel.setLayout(modelPanelLayout);
         modelPanelLayout.setHorizontalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(modelSplit)
+            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
         );
         modelPanelLayout.setVerticalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,8 +293,29 @@ public class MainForm extends javax.swing.JFrame {
 
         fileMenu.setText("File");
 
-        jMenuItem1.setText("jMenuItem1");
-        fileMenu.add(jMenuItem1);
+        newModelItem.setText("New model");
+        newModelItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newModelItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(newModelItem);
+
+        loadModelItem.setText("Load model");
+        loadModelItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadModelItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadModelItem);
+
+        saveModelItem.setText("Save model");
+        saveModelItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveModelItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveModelItem);
         fileMenu.add(jSeparator1);
 
         exitMenu.setText("Exit");
@@ -155,13 +338,21 @@ public class MainForm extends javax.swing.JFrame {
         });
         mapMenu.add(genMapMenu);
 
-        saveMapMenu.setText("Save to file");
+        saveMapMenu.setText("Save map image to file");
         saveMapMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMapMenuActionPerformed(evt);
             }
         });
         mapMenu.add(saveMapMenu);
+
+        saveScreenShotItem.setText("Save map screen shot");
+        saveScreenShotItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveScreenShotItemActionPerformed(evt);
+            }
+        });
+        mapMenu.add(saveScreenShotItem);
 
         mainMenu.add(mapMenu);
 
@@ -171,7 +362,7 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit)
+            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -182,8 +373,9 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void genMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genMapMenuActionPerformed
-        formCtrl.generateMap(400, 400, 5, 100, 1, 4, 1, 2);
-        formCtrl.paintMap();
+        MapGenerateDlg dlg = new MapGenerateDlg(this, true);
+        dlg.setFormCtrl( formCtrl );
+        dlg.setVisible(true);
     }//GEN-LAST:event_genMapMenuActionPerformed
 
     private void saveMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMapMenuActionPerformed
@@ -194,22 +386,87 @@ public class MainForm extends javax.swing.JFrame {
         formCtrl.exitApp();
     }//GEN-LAST:event_exitMenuActionPerformed
 
+    private void loadModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadModelItemActionPerformed
+        formCtrl.loadInputValues();
+        formCtrl.refreshInputValFromModel(null);
+    }//GEN-LAST:event_loadModelItemActionPerformed
+
+    private void saveModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveModelItemActionPerformed
+        formCtrl.saveInputValues();
+    }//GEN-LAST:event_saveModelItemActionPerformed
+
+    private void newModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newModelItemActionPerformed
+        formCtrl.newModel();
+        formCtrl.refreshInputValFromModel(null);
+    }//GEN-LAST:event_newModelItemActionPerformed
+
+    private void inputValueTabPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_inputValueTabPropertyChange
+        
+    }//GEN-LAST:event_inputValueTabPropertyChange
+
+    private void syncInputToModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_syncInputToModelActionPerformed
+        formCtrl.refreshInputValToModel(null);
+    }//GEN-LAST:event_syncInputToModelActionPerformed
+
+    private void saveScreenShotItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveScreenShotItemActionPerformed
+        formCtrl.saveMapScreenshotToFile("screenshot.png");
+    }//GEN-LAST:event_saveScreenShotItemActionPerformed
+
+    private void mapPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapPanelMouseClicked
+        formCtrl.showCurrentHeight(evt.getPoint());
+    }//GEN-LAST:event_mapPanelMouseClicked
+
+    private void startAlgoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startAlgoBtnActionPerformed
+        formCtrl.startHppAlgorithm();
+    }//GEN-LAST:event_startAlgoBtnActionPerformed
+
+    private void block1BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block1BtnActionPerformed
+        formCtrl.block1Algorithm();
+    }//GEN-LAST:event_block1BtnActionPerformed
+
+    private void algorithmValueTabPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_algorithmValueTabPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_algorithmValueTabPropertyChange
+
+    private void showTownRadiusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTownRadiusBtnActionPerformed
+        formCtrl.drawTownModel();
+    }//GEN-LAST:event_showTownRadiusBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton algoStatusField;
+    public javax.swing.JTable algorithmValueTab;
+    public javax.swing.JButton block1Btn;
+    public javax.swing.JLabel curHeightLab;
     public javax.swing.JMenuItem exitMenu;
     public javax.swing.JMenu fileMenu;
     public javax.swing.JMenuItem genMapMenu;
     public javax.swing.JPanel inputParamPanel;
-    public javax.swing.JMenuItem jMenuItem1;
+    public javax.swing.JTable inputValueTab;
+    public javax.swing.JLabel jLabel1;
+    public javax.swing.JLabel jLabel2;
+    public javax.swing.JLabel jLabel3;
+    public javax.swing.JLabel jLabel4;
+    public javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JPopupMenu.Separator jSeparator1;
+    public javax.swing.JSeparator jSeparator2;
+    public javax.swing.JMenuItem loadModelItem;
     public javax.swing.JMenuBar mainMenu;
     public javax.swing.JSplitPane mainSplit;
     public javax.swing.JMenu mapMenu;
     public org.hpp.ui.component.MapPanel mapPanel;
     public javax.swing.JPanel mapPanelBackground;
+    public javax.swing.JScrollPane mapScroll;
     public javax.swing.JScrollPane mapScrollPane;
     public javax.swing.JPanel modelPanel;
     public javax.swing.JSplitPane modelSplit;
+    public javax.swing.JMenuItem newModelItem;
     public javax.swing.JPanel outputParamPanel;
     public javax.swing.JMenuItem saveMapMenu;
+    public javax.swing.JMenuItem saveModelItem;
+    public javax.swing.JMenuItem saveScreenShotItem;
+    public javax.swing.JButton showTownRadiusBtn;
+    public javax.swing.JButton startAlgoBtn;
+    public javax.swing.JButton syncInputToModel;
     // End of variables declaration//GEN-END:variables
 }

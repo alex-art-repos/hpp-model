@@ -47,7 +47,7 @@ dependencies {
     )
 }
 
-project.version = '1.1.0'
+project.version = '1.2.0'
 project.ext.version = project.version // save current version
 
 /**
@@ -68,10 +68,16 @@ task copyToEnv(type: Copy) {
     from 'env'
 }
 
+task copyToModel(type: Copy) {
+    into "$buildDir/libs"
+    from 'model'
+}
+
 task buildExecutor
 buildExecutor.dependsOn 'copyToLib'
 buildExecutor.dependsOn 'copyToCfg'
 buildExecutor.dependsOn 'copyToEnv'
+buildExecutor.dependsOn 'copyToModel'
 
 jar.dependsOn 'buildExecutor'
 
@@ -105,6 +111,10 @@ jar.doFirst {
     }
 }
 
+test {
+    testLogging.showStandardStreams = true    
+}
+
 /**
  * ================ Build dist ================ 
  **/
@@ -131,7 +141,7 @@ assemble.dependsOn 'buildDist'
 apply plugin: 'maven'
 
 artifacts {
-    archives (file('build/dist/' + project.name + '.tgz')) {
+    archives (file('build/dist/' + project.name + '.tgz')) { // + '-' + project.version 
         group 'org.hpp'
         name 'hpp-model'
         classifier 'dist'
@@ -145,7 +155,14 @@ uploadArchives {
     }
 }
 
+task restoreVersion {
+    doFirst {
+        project.version = project.ext.version
+    }
+}
+
 uploadArchives.dependsOn = [] // prevent publish subprojects
+uploadArchives.dependsOn restoreVersion
 // uploadArchives.dependsOn 'updateVersionForUploadMode'
 
 task uploadExport

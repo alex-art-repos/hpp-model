@@ -6,8 +6,10 @@ package org.hpp.ui.component;
 
 import java.awt.Graphics;
 import java.awt.LayoutManager;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
+import org.hpp.terrain.TerrainPoint;
 
 /**
  *
@@ -15,6 +17,8 @@ import javax.swing.JPanel;
  */
 public class MapPanel extends JPanel {
     protected BufferedImage backgroundImage = null;
+    protected BufferedImage townImage = null;
+    protected TerrainPoint townImagePos = null;
 
     public MapPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
@@ -37,6 +41,10 @@ public class MapPanel extends JPanel {
         if ( backgroundImage != null ) {
             g.drawImage( backgroundImage, 0, 0, this);
         }
+        
+        if ( townImage != null ) {
+            g.drawImage( townImage, townImagePos.getX(), townImagePos.getY() - townImage.getHeight()/2, this);
+        }
     }
 
     public BufferedImage getBackgroundImage() {
@@ -45,6 +53,22 @@ public class MapPanel extends JPanel {
 
     public void setBackgroundImage(BufferedImage backgroundImage) {
         this.backgroundImage = backgroundImage;
+    }
+
+    public BufferedImage getTownImage() {
+        return townImage;
+    }
+
+    public void setTownImage(BufferedImage townImage) {
+        this.townImage = townImage;
+    }
+
+    public TerrainPoint getTownImagePos() {
+        return townImagePos;
+    }
+
+    public void setTownImagePos(TerrainPoint townImagePos) {
+        this.townImagePos = townImagePos;
     }
     
 }
