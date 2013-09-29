@@ -130,8 +130,7 @@ public class RiverGen {
             
             lastTerrainPoint = newTerrainPoint;
 
-            if ( ( newTerrainPoint.getX() >= terrainMap.getMapWidth() || newTerrainPoint.getX() <= 0 ) 
-                || ( newTerrainPoint.getY() >= terrainMap.getMapHeight() || newTerrainPoint.getY() <= 0 ) ) {
+            if ( !terrainMap.contains(newTerrainPoint) ) {
                 
                 if ( newTerrainPoint.getX() >= terrainMap.getMapWidth() ) {
                     newTerrainPoint.setX( terrainMap.getMapWidth() - 1 );
@@ -149,7 +148,8 @@ public class RiverGen {
                     newTerrainPoint.setY( 0 );
                 }
                 
-                river.addEdge(newTerrainPoint, edgeWidth);
+                // do not ever add edge with null stop point
+                river.setLastPoint(newTerrainPoint);
                 newTerrainPoint = null;
             } else {
                 river.addEdge(newTerrainPoint, edgeWidth);
@@ -237,7 +237,8 @@ public class RiverGen {
                     newTerrainPoint.setY( 0 );
                 }
                 
-                river.addEdge(newTerrainPoint, edgeWidth);
+                // do not ever add edge with null stop point
+                river.setLastPoint(newTerrainPoint);
                 newTerrainPoint = null;
             } else {
                 river.addEdge(newTerrainPoint, edgeWidth);

@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
  * @author Gautama
  */
 public class RiverFormer {
+    public static enum RiverDepthMode {
+        FORCED, SMOOTHED, NATURAL;
+    }
+    
     private static final Logger log = LoggerFactory.getLogger(RiverFormer.class);
 
     private int riverDeltaHeight = 20;
@@ -25,6 +29,8 @@ public class RiverFormer {
     private int bankHeightDelta = 5;
     
     private boolean isBuildBanks = false;
+    private boolean isForcedBanks = false;
+    private RiverDepthMode riverDepthMode = RiverDepthMode.NATURAL;
     
     private double heightStability = 0.65;
     
@@ -72,6 +78,22 @@ public class RiverFormer {
         this.isBuildBanks = isBuildBanks;
     }
 
+    public boolean isIsForcedBanks() {
+        return isForcedBanks;
+    }
+
+    public void setIsForcedBanks(boolean isForcedBanks) {
+        this.isForcedBanks = isForcedBanks;
+    }
+
+    public RiverDepthMode getRiverDepthMode() {
+        return riverDepthMode;
+    }
+
+    public void setRiverDepthMode(RiverDepthMode riverDepthMode) {
+        this.riverDepthMode = riverDepthMode;
+    }
+
     public double getHeightStability() {
         return heightStability;
     }
@@ -100,7 +122,18 @@ public class RiverFormer {
             lastHeight = riverModel.getHeight(lastTerrainPoint) == null 
                     ? terrain.getTerrainHeight(lastTerrainPoint) : riverModel.getHeight(lastTerrainPoint);
             
-            newHeight = Math.min(curHeight - riverDeltaHeight, lastHeight - riverDeltaHeight/2 );
+            switch(riverDepthMode) {
+                case FORCED:
+                    newHeight = Math.min(curHeight - riverDeltaHeight, lastHeight - riverDeltaHeight/2 );
+                    break;
+                case SMOOTHED:
+                    newHeight = Math.min(curHeight - riverDeltaHeight, lastHeight - riverDeltaHeight );
+                    break;
+                case NATURAL:
+                default:
+                    newHeight = curHeight - riverDeltaHeight;
+                    break;
+            }
             
             if ( RandomUtil.randomDouble() < heightStability ) {
                 newHeight = lastHeight;
@@ -111,15 +144,25 @@ public class RiverFormer {
             
             Polygon polygon = new Polygon();
             
-            polygon.addPoint(lastTerrainPoint.getX() - halfLastWidth, lastTerrainPoint.getY() - 1);
-            polygon.addPoint(lastTerrainPoint.getX() + halfLastWidth, lastTerrainPoint.getY() - 1);
-            polygon.addPoint(point.getX() + halfWidth, point.getY() + 1);
-            polygon.addPoint(point.getX() - halfWidth, point.getY() + 1);
+            polygon.addPoint(lastTerrainPoint.getX() - halfLastWidth, lastTerrainPoint.getY());
+            polygon.addPoint(lastTerrainPoint.getX() + halfLastWidth, lastTerrainPoint.getY());
+            polygon.addPoint(point.getX() + halfWidth, point.getY());
+            polygon.addPoint(point.getX() - halfWidth, point.getY());
 
             riverModel.setHeight(point, newHeight);
             
             int startX = Math.min(lastTerrainPoint.getX() - halfLastWidth, point.getX() - halfWidth),
                 stopX = Math.max(lastTerrainPoint.getX() + halfLastWidth, point.getX() + halfWidth);
+            
+            for (int x = startX; x <= stopX; x++) {
+                riverModel.setHeight(x, point.getY(), newHeight);
+                terrain.setTerrainHeight(x, point.getY(), TerrainModel.RIVER_MARKER_HEIGHT);
+            }
+            
+            for (int x = startX; x <= stopX; x++) {
+                riverModel.setHeight(x, lastTerrainPoint.getY(), newHeight);
+                terrain.setTerrainHeight(x, lastTerrainPoint.getY(), TerrainModel.RIVER_MARKER_HEIGHT);
+            }
             
             for (int x = startX; x <= stopX; x++) {
                 for (int y = lastTerrainPoint.getY(); y <= point.getY(); y++) {
@@ -138,7 +181,7 @@ public class RiverFormer {
     }
     
     protected void buildBanks( RiverModel riverModel, TerrainModel terrain) {
-        List<TerrainPoint> points = riverModel.getAllPoints();
+        List<TerrainPoint> points = riverModel.getAllHeightPoints();
         
         int bankWidth = RandomUtil.randomInRange(minBankWidth, maxBankWidth);
                 
@@ -149,18 +192,22 @@ public class RiverFormer {
             
             if ( riverModel.getHeight(x-1, y) == null ) {
                 for (int i = 0; i < bankWidth; i++) {
-//                    if ( height + (i+1)*bankHeightDelta >=  terrain.getTerrainHeight(x - i, y) ) {
-//                        break;
-//                    }
+                    if ( !isForcedBanks ) {
+                        if ( height + (i+1)*bankHeightDelta >=  terrain.getTerrainHeight(x - i, y) ) {
+                            break;
+                        }
+                    }
                     terrain.setTerrainHeight(x - i, y, height + (i+1)*bankHeightDelta);
                 }
             }
             
             if ( riverModel.getHeight(x+1, y) == null ) {
                 for (int i = 0; i < bankWidth; i++) {
-//                    if ( height + (i+1)*bankHeightDelta >=  terrain.getTerrainHeight(x + i, y) ) {
-//                        break;
-//                    }
+                    if ( !isForcedBanks ) {
+                        if ( height + (i+1)*bankHeightDelta >=  terrain.getTerrainHeight(x + i, y) ) {
+                            break;
+                        }
+                    }
                     
                     terrain.setTerrainHeight(x + i, y, height + (i+1)*bankHeightDelta);
                 }
@@ -180,4 +227,5 @@ public class RiverFormer {
         }
         
     }
+
 }
