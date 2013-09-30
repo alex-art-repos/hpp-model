@@ -18,6 +18,12 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
+        
+        showDamBtn.setEnabled(false);
+        showDamBtn.setVisible(false);
+        
+        showFloodBtn.setEnabled(false);
+        showFloodBtn.setVisible(false);
     }
     
     public void startup() {
@@ -38,7 +44,6 @@ public class MainForm extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         inputValueTab = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        syncInputToModel = new javax.swing.JButton();
         modelPanel = new javax.swing.JPanel();
         modelSplit = new javax.swing.JSplitPane();
         mapScrollPane = new javax.swing.JScrollPane();
@@ -80,7 +85,6 @@ public class MainForm extends javax.swing.JFrame {
         setLocationByPlatform(true);
 
         mainSplit.setDividerLocation(150);
-        mainSplit.setDividerSize(10);
         mainSplit.setOneTouchExpandable(true);
 
         inputValueTab.setModel(new javax.swing.table.DefaultTableModel(
@@ -103,13 +107,6 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel1.setText("Input values");
 
-        syncInputToModel.setText("refresh");
-        syncInputToModel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                syncInputToModelActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout inputParamPanelLayout = new javax.swing.GroupLayout(inputParamPanel);
         inputParamPanel.setLayout(inputParamPanelLayout);
         inputParamPanelLayout.setHorizontalGroup(
@@ -117,26 +114,21 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(inputParamPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(syncInputToModel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(69, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         inputParamPanelLayout.setVerticalGroup(
             inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inputParamPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(inputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(syncInputToModel))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE))
         );
 
         mainSplit.setLeftComponent(inputParamPanel);
 
         modelSplit.setDividerLocation(450);
-        modelSplit.setDividerSize(10);
         modelSplit.setOneTouchExpandable(true);
 
         mapScroll.setAutoscrolls(true);
@@ -155,7 +147,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 421, Short.MAX_VALUE)
+            .addGap(0, 422, Short.MAX_VALUE)
         );
 
         mapScroll.setViewportView(mapPanel);
@@ -335,7 +327,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         outputParamPanelLayout.setVerticalGroup(
             outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 717, Short.MAX_VALUE)
+            .addGap(0, 720, Short.MAX_VALUE)
         );
 
         modelSplit.setRightComponent(outputParamPanel);
@@ -348,7 +340,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         modelPanelLayout.setVerticalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
+            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 722, Short.MAX_VALUE)
         );
 
         mainSplit.setRightComponent(modelPanel);
@@ -463,12 +455,8 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_newModelItemActionPerformed
 
     private void inputValueTabPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_inputValueTabPropertyChange
-        
-    }//GEN-LAST:event_inputValueTabPropertyChange
-
-    private void syncInputToModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_syncInputToModelActionPerformed
         formCtrl.refreshInputValToModel(null);
-    }//GEN-LAST:event_syncInputToModelActionPerformed
+    }//GEN-LAST:event_inputValueTabPropertyChange
 
     private void saveScreenShotItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveScreenShotItemActionPerformed
         formCtrl.saveMapScreenshotToFile("screenshot.png");
@@ -551,6 +539,5 @@ public class MainForm extends javax.swing.JFrame {
     public javax.swing.JButton showFloodBtn;
     public javax.swing.JButton showTownRadiusBtn;
     public javax.swing.JButton startAlgoBtn;
-    public javax.swing.JButton syncInputToModel;
     // End of variables declaration//GEN-END:variables
 }

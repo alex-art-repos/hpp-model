@@ -8,6 +8,8 @@ import java.awt.Graphics;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 import org.hpp.terrain.TerrainPoint;
 
@@ -19,6 +21,8 @@ public class MapPanel extends JPanel {
     protected BufferedImage backgroundImage = null;
     protected BufferedImage townImage = null;
     protected TerrainPoint townImagePos = null;
+    
+    private List<IDrawObject> drawObjects = new ArrayList<>();
 
     public MapPanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
@@ -42,8 +46,10 @@ public class MapPanel extends JPanel {
             g.drawImage( backgroundImage, 0, 0, this);
         }
         
-        if ( townImage != null ) {
-            g.drawImage( townImage, townImagePos.getX(), townImagePos.getY() - townImage.getHeight()/2, this);
+        for (IDrawObject draw : drawObjects) {
+            if ( draw.isShow() ) {
+                draw.paint(g, this);
+            }
         }
     }
 
@@ -55,20 +61,15 @@ public class MapPanel extends JPanel {
         this.backgroundImage = backgroundImage;
     }
 
-    public BufferedImage getTownImage() {
-        return townImage;
-    }
-
-    public void setTownImage(BufferedImage townImage) {
-        this.townImage = townImage;
-    }
-
-    public TerrainPoint getTownImagePos() {
-        return townImagePos;
-    }
-
-    public void setTownImagePos(TerrainPoint townImagePos) {
-        this.townImagePos = townImagePos;
+    public void addDrawObj(IDrawObject obj) {
+        drawObjects.add(obj);
     }
     
+    public void removeDrawObj(IDrawObject obj) {
+        drawObjects.remove(obj);
+    }
+    
+    public void clearDrawObj() {
+        drawObjects.clear();
+    }
 }

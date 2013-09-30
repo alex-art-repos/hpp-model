@@ -228,6 +228,8 @@ public class HppAlgo {
     
     private RiverRange intersection = null;
     private DamModel damModel = null;
+    private DamModel upperDam;
+    private List<TerrainPoint> trapezeHeight = null;
     private List<TerrainPoint> floodAreaPoints = null;
     
     private double GenRate_norm0 = 0;
@@ -294,6 +296,14 @@ public class HppAlgo {
         return damModel;
     }
 
+    public DamModel getUpperDam() {
+        return upperDam;
+    }
+
+    public List<TerrainPoint> getTrapezeHeight() {
+        return trapezeHeight;
+    }
+
     public List<TerrainPoint> getFloodArea() {
         return floodAreaPoints;
     }
@@ -312,6 +322,10 @@ public class HppAlgo {
 
     public double getPopt_year_ud() {
         return Popt_year_ud;
+    }
+
+    public HppProject getBestProject() {
+        return bestProject;
     }
 
     public void block1() throws Exception {
@@ -737,7 +751,8 @@ public class HppAlgo {
         RiverEdge curEdge = null;
         
         TerrainPoint nextDamPoint = null, curBasePoint = null, workingPoint = null;
-        int damHeight = 0;
+        int damHeight = 0, pxScale_2 = model.getTerrainModel().getPixelScale() * model.getTerrainModel().getPixelScale();
+        double riverSquare =  0;
         
         damHeight = dam.getHeight();
         curEdge = dam.getRiverIntersectEdge();
@@ -747,7 +762,7 @@ public class HppAlgo {
             curBasePoint = curEdge.getStart();
             
             if ( workingPoint.equals( curBasePoint ) ) {
-                workingPoint = curEdge.getStop();
+                riverSquare += curEdge.getWidth() * curEdge.length();
                 curEdge = curEdge.getPrevEdge();
                 continue;
             }
@@ -759,26 +774,48 @@ public class HppAlgo {
             workingPoint = nextDamPoint;
         }
         
-        DamModel upperDam = this.findDam(curEdge, nextDamPoint, 1);
+        if (curEdge == null) {
+            log.debug("Start of river was reached (not implemented).");
+            return 0;
+        }
+        
+        if (nextDamPoint == null) {
+            log.debug("Dam point is null (not implemented).");
+            return 0;
+        }
+        
+        log.debug(String.format("Upper dam point: %s", nextDamPoint));
+        
+        upperDam = this.findDam(curEdge, nextDamPoint, 1);
         TerrainLine upperDamLine = upperDam.getLine();
+        
+        log.debug(String.format("Upper dam : %s", upperDam));
         
         TerrainPoint damIntersect = damModel.getLine().intersection( upperDam.getLine() ),
                      leftPoint = null,
                      rightPoint = null;
         
+        log.debug("Dams intersect: " + damIntersect);
+        
         if ( damIntersect != null 
                 && damIntersect.isBetween( damModel.getLeftPoint(), damModel.getRightPoint()) ) {
-            upperDamLine.setK( damModel.getLine().getK() ); // make parallel
+            upperDamLine = dam.getLine().parallelLineByPoint(nextDamPoint);
+            log.debug("Corrected upper dam line: " + upperDamLine);
         } 
         
-        leftPoint = this.findLeftBank(upperDam.getLine(), nextDamPoint);
-        rightPoint = this.findRightBank(upperDam.getLine(), nextDamPoint);
+        leftPoint = this.findLeftBank(upperDamLine, nextDamPoint);
+        rightPoint = this.findRightBank(upperDamLine, nextDamPoint);
         
         floodAreaPoints = new ArrayList<>();
-        floodAreaPoints.add( leftPoint );
-        floodAreaPoints.add( rightPoint );
-        floodAreaPoints.add( dam.getRightPoint() );
-        floodAreaPoints.add( dam.getLeftPoint() );
+        
+        if ( leftPoint == null || rightPoint == null ) {
+            log.debug("Can`t find upper dam bound points.");
+        } else {
+            floodAreaPoints.add( leftPoint );
+            floodAreaPoints.add( rightPoint );
+            floodAreaPoints.add( dam.getRightPoint() );
+            floodAreaPoints.add( dam.getLeftPoint() );
+        }
         
         for (TerrainPoint point : floodAreaPoints) {
             log.debug("\tFlood area point:" + point);
@@ -791,14 +828,31 @@ public class HppAlgo {
         
         TerrainLine dmLine = dam.getLine();
         
-        TerrainLine heightLine = dmLine.normalLineByPoint( nextDamPoint );
+        TerrainLine heightLine = dmLine.normalLineByPoint( leftPoint );
+        log.debug(String.format("Height line: %s", heightLine));
+        
         TerrainPoint heightPoint = dmLine.intersection(heightLine);
         
-        double height = TerrainPoint.distance(heightPoint, nextDamPoint);
+        trapezeHeight = new ArrayList<>();
+        trapezeHeight.add( heightPoint );
+        trapezeHeight.add( leftPoint );
+        log.debug(String.format("Trapeze height: base = %s, left point = %s", heightPoint, leftPoint));
         
-        int pxScale = model.getTerrainModel().getPixelScale();
-                 
-        return (pxScale * pxScale) * ( ( riverWidth + dam.getWidth() )/2 * height);
+        double height = TerrainPoint.distance(heightPoint, leftPoint);
+        
+        log.debug(String.format("Trapeze : a = %f, b = %f, h = %f", riverWidth, dam.getWidth(), height));
+        
+        double floodSquare = ( ( riverWidth + dam.getWidth() )/2 * height);
+        
+        if ( riverSquare > 0 ) {
+            log.debug("River square : " + riverSquare);
+            if (riverSquare < floodSquare) {
+                log.debug(String.format("Real square %f, corrected %f", floodSquare, (floodSquare-riverSquare)));
+                // floodSquare -= riverSquare;
+            }
+        }
+        
+        return floodSquare * pxScale_2;
     }
     
     protected int findHeight(TerrainPoint point) {

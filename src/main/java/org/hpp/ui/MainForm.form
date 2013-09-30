@@ -117,7 +117,6 @@
     <Container class="javax.swing.JSplitPane" name="mainSplit">
       <Properties>
         <Property name="dividerLocation" type="int" value="150"/>
-        <Property name="dividerSize" type="int" value="10"/>
         <Property name="oneTouchExpandable" type="boolean" value="true"/>
       </Properties>
 
@@ -136,9 +135,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="syncInputToModel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="69" max="32767" attributes="0"/>
                   </Group>
                   <Component id="jScrollPane1" alignment="0" pref="0" max="32767" attributes="0"/>
               </Group>
@@ -147,12 +144,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="syncInputToModel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="679" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="689" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -202,14 +196,6 @@
                 <Property name="text" type="java.lang.String" value="Input values"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="syncInputToModel">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="refresh"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="syncInputToModelActionPerformed"/>
-              </Events>
-            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="modelPanel">
@@ -227,7 +213,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="modelSplit" alignment="0" pref="719" max="32767" attributes="0"/>
+                  <Component id="modelSplit" alignment="0" pref="722" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -235,7 +221,6 @@
             <Container class="javax.swing.JSplitPane" name="modelSplit">
               <Properties>
                 <Property name="dividerLocation" type="int" value="450"/>
-                <Property name="dividerSize" type="int" value="10"/>
                 <Property name="oneTouchExpandable" type="boolean" value="true"/>
               </Properties>
 
@@ -370,7 +355,7 @@
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <EmptySpace min="0" pref="421" max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="422" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
@@ -533,7 +518,7 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="717" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="720" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                   </Layout>

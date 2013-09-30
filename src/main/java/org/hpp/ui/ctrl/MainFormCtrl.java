@@ -34,7 +34,10 @@ import org.hpp.terrain.river.RiverModel;
 import org.hpp.terrain.town.TownGen;
 import org.hpp.terrain.town.TownModel;
 import org.hpp.ui.MainForm;
+import org.hpp.ui.component.DamDrawObj;
+import org.hpp.ui.component.ImageDrawObj;
 import org.hpp.ui.component.MapPanel;
+import org.hpp.ui.component.TownDrawObj;
 import org.hpp.utils.LogHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +50,13 @@ public class MainFormCtrl extends BaseController<MainForm> {
     public static final Logger log = LoggerFactory.getLogger(MainFormCtrl.class);
     
     protected BufferedImage mapImage = null;
-    protected BufferedImage townImage = null;
+    protected TownDrawObj townDrawObj = null;
     
     protected HppModel model = null;
     protected HppAlgo algorithm = null;
 
+    protected DamDrawObj damDrawObj = null;
+    
     public MainFormCtrl(MainForm theForm) {
         super();
         
@@ -211,28 +216,17 @@ public class MainFormCtrl extends BaseController<MainForm> {
         
         mapImage = new TerrainRenderer().getTerrainImage( terrain );
         
-        if ( townImage == null ) {
-            townImage = this.loadTownImage();
+        if ( townDrawObj == null ) {
+            townDrawObj = new TownDrawObj();
+            townDrawObj.setImage( this.loadTownImage() );
+            townDrawObj.setIsShow(false);
+            
+            this.getForm().mapPanel.addDrawObj(townDrawObj);
         }
         
         this.refreshScaleInfo();
         
         return true;
-    }
-    
-    public void paintMap(Graphics g) {
-        MainForm form = this.getForm();
-        
-        if ( mapImage == null ) {
-            log.warn("No current image.");
-            return;
-        }
-        
-        if ( g == null ) {
-            g = form.mapPanel.getGraphics();
-        }
-        
-        g.drawImage( mapImage, 0, 0, form);
     }
     
     public void paintMap() {
@@ -248,13 +242,9 @@ public class MainFormCtrl extends BaseController<MainForm> {
             form.mapPanel.setSize(rect.width, rect.height);
             form.mapPanel.setPreferredSize( new Dimension(rect.width, rect.height) );
             
-            if ( model.getTownModel() != null ) {
-                form.mapPanel.setTownImagePos( model.getTownModel().getCenter() );
-            }
         }
         
         form.mapPanel.setBackgroundImage( this.getMapImage() );
-        form.mapPanel.setTownImage( townImage );
         
         form.mapPanel.repaint();
     }
@@ -503,31 +493,38 @@ public class MainFormCtrl extends BaseController<MainForm> {
     }
     
     public void drawTownModel() {
-        Graphics g = this.getForm().mapPanel.getGraphics();
-        
-        TownModel town = model.getTownModel();
-        
-        double boxSide = 2 * model.kmToPx( model.getDmax() );
-        
-        g.drawOval(
-                town.getCenter().getX() - new Double(boxSide/2).intValue(), 
-                town.getCenter().getY() - new Double(boxSide/2).intValue(), 
-                new Double(boxSide).intValue(), 
-                new Double(boxSide).intValue()
-            );
-    }
-    
-    public void drawDamModel() {
-        DamModel dam = algorithm.getDamModel();
-
-        if ( dam == null ) {
+        if ( model == null ) {
             return;
         }
         
-        Graphics g = this.getForm().mapPanel.getGraphics();
+        double radius = model.kmToPx( model.getDmax() );
         
-        g.drawLine(dam.getLeftPoint().getX(), dam.getLeftPoint().getY(), 
-                dam.getRightPoint().getX(), dam.getRightPoint().getY());
+        if ( townDrawObj != null ) {
+            townDrawObj.setPos( model.getTownModel().getCenter() );
+            townDrawObj.setRadius( new Double(radius).intValue() );
+        }
+        
+        townDrawObj.setIsShow( !townDrawObj.isShow() );
+        
+        this.getForm().mapPanel.repaint();
+    }
+    
+    public void drawDamModel() {
+        if ( algorithm == null ) {
+            return;
+        }
+        
+        if ( damDrawObj == null ) {
+            damDrawObj = new DamDrawObj(algorithm);
+            damDrawObj.setIsShow(false);
+            this.getForm().mapPanel.addDrawObj(damDrawObj);
+        } else {
+            damDrawObj.setAlgorithm(algorithm);
+        }
+        
+        damDrawObj.setIsShow( !damDrawObj.isShow() );
+        
+        this.getForm().mapPanel.repaint();
     }
     
     public void drawFloodModel() {
@@ -581,8 +578,6 @@ public class MainFormCtrl extends BaseController<MainForm> {
         }
         
         this.refreshAlgoValFromModel(null);
-        
-        this.drawTownModel();
     }
     
     public void block2Algorithm() {

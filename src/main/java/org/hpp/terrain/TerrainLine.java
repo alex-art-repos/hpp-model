@@ -109,9 +109,30 @@ public class TerrainLine {
         if ( isSpecial ) {
             return new TerrainLine(0, point.getY());
         } else {
-            double newK = (-1) / k,
+            if ( k == 0  ) { // almost 0
+                return new TerrainLine(point.getX());
+            } else {
+                double newK = (-1) / k,
+                       newB = point.getY() - newK * point.getX();
+
+                return new TerrainLine(newK, newB);
+            }
+        }
+    }
+    
+    /**
+     * Parallel line to current.
+     * (y = kx +b, y = mx + p ==> k = m )
+     * @param point point on the parallel line
+     * @return normal line
+     */
+    public TerrainLine parallelLineByPoint(TerrainPoint point) {
+        if ( isSpecial ) {
+            return new TerrainLine(point.getX());
+        } else {
+            double newK = k,
                    newB = point.getY() - newK * point.getX();
-                    
+
             return new TerrainLine(newK, newB);
         }
     }
@@ -125,13 +146,17 @@ public class TerrainLine {
                 return TerrainPoint.nearestPoint(lineX, line.getValue(lineX));
             }
         } else {
-            if ( Math.abs(k - line.getK()) < 0.001 ) {
-                // almost parallel
-                return null;
+            if ( line.isIsSpecial() ) {
+                return TerrainPoint.nearestPoint(lineX, this.getValue(lineX));
             } else {
-                double newX = (line.getB() - b) / (k - line.getK());
-                
-                return TerrainPoint.nearestPoint(newX, this.getValue(newX));
+                if ( Math.abs(k - line.getK()) < 0.001 ) {
+                    // almost parallel
+                    return null;
+                } else {
+                    double newX = (line.getB() - b) / (k - line.getK());
+
+                    return TerrainPoint.nearestPoint(newX, this.getValue(newX));
+                }
             }
         }
     }

@@ -117,7 +117,6 @@ public class RiverEdge {
                 }
             });
             
-            points.clear();
             points = Arrays.asList(forSort);
         }
         
