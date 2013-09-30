@@ -4,6 +4,8 @@
  */
 package org.hpp.domain;
 
+import org.hpp.terrain.river.RiverFormer;
+
 /**
  *
  * @author Gautama
@@ -15,17 +17,21 @@ public class MapGeneratorConfig {
     private int minRiverEdge = 20;
     private int maxRiverEdge = 60;
     
-    private int riverHeightDelta = 10;
+    private int riverHeightDelta = 1;
     
-    private int minRiverWidth = 10;
-    private int maxRiverWidth = 30;
+    private int minRiverWidth = 20;
+    private int maxRiverWidth = 20;
     
-    private int minBankWidth = 5;
-    private int maxBankWidth = 15;
+    private int minBankWidth = 20;
+    private int maxBankWidth = 20;
     
-    private int bankHeightDelta = 5;
+    private int bankHeightDelta = 2;
     
     private boolean isNaturalGen = true;
+    private boolean isBuildBanks = true;
+    private boolean isForcedBanks = false;
+    
+    private RiverFormer.RiverDepthMode riverDepthMode = RiverFormer.RiverDepthMode.NATURAL;
     
     private int heightStability = 65;
     
@@ -42,6 +48,8 @@ public class MapGeneratorConfig {
     
     private int minGenZ = 1;
     private int maxGenZ = 2;
+    
+    private int heightScale = 300;
     
     public MapGeneratorConfig() {
         super();
@@ -135,6 +143,30 @@ public class MapGeneratorConfig {
         this.isNaturalGen = isNaturalGen;
     }
 
+    public boolean isIsBuildBanks() {
+        return isBuildBanks;
+    }
+
+    public void setIsBuildBanks(boolean isBuildBanks) {
+        this.isBuildBanks = isBuildBanks;
+    }
+
+    public boolean isIsForcedBanks() {
+        return isForcedBanks;
+    }
+
+    public void setIsForcedBanks(boolean isForcedBanks) {
+        this.isForcedBanks = isForcedBanks;
+    }
+
+    public RiverFormer.RiverDepthMode getRiverDepthMode() {
+        return riverDepthMode;
+    }
+
+    public void setRiverDepthMode(RiverFormer.RiverDepthMode riverDepthMode) {
+        this.riverDepthMode = riverDepthMode;
+    }
+
     public int getHeightStability() {
         return heightStability;
     }
@@ -206,6 +238,14 @@ public class MapGeneratorConfig {
     public void setMaxGenZ(int maxGenZ) {
         this.maxGenZ = maxGenZ;
     }
+
+    public int getHeightScale() {
+        return heightScale;
+    }
+
+    public void setHeightScale(int heightScale) {
+        this.heightScale = heightScale;
+    }
     
     public int getPixelScale() {
         return (int)Math.ceil( this.getMapScale() / 1000f / this.getMonitorScale() );
@@ -213,7 +253,7 @@ public class MapGeneratorConfig {
 
     @Override
     public String toString() {
-        return "MapGeneratorConfig{" + "pixelScale =" + this.getPixelScale() + ", minRiverAngle=" + minRiverAngle + ", maxRiverAngle=" + maxRiverAngle + ", minRiverEdge=" + minRiverEdge + ", maxRiverEdge=" + maxRiverEdge + ", riverHeightDelta=" + riverHeightDelta + ", minRiverWidth=" + minRiverWidth + ", maxRiverWidth=" + maxRiverWidth + ", minBankWidth=" + minBankWidth + ", maxBankWidth=" + maxBankWidth + ", bankHeightDelta=" + bankHeightDelta + ", isNaturalGen=" + isNaturalGen + ", heightStability=" + heightStability + ", mapWidth=" + mapWidth + ", mapHeight=" + mapHeight + ", mapScale=" + mapScale + ", monitorScale=" + monitorScale + ", minGenX=" + minGenX + ", maxGenX=" + maxGenX + ", minGenZ=" + minGenZ + ", maxGenZ=" + maxGenZ + '}';
+        return "MapGeneratorConfig{" + "pixelScale=" + this.getPixelScale() + ", minRiverAngle=" + minRiverAngle + ", maxRiverAngle=" + maxRiverAngle + ", minRiverEdge=" + minRiverEdge + ", maxRiverEdge=" + maxRiverEdge + ", riverHeightDelta=" + riverHeightDelta + ", minRiverWidth=" + minRiverWidth + ", maxRiverWidth=" + maxRiverWidth + ", minBankWidth=" + minBankWidth + ", maxBankWidth=" + maxBankWidth + ", bankHeightDelta=" + bankHeightDelta + ", isNaturalGen=" + isNaturalGen + ", isBuildBanks=" + isBuildBanks + ", isForcedBanks=" + isForcedBanks + ", riverDepthMode=" + riverDepthMode + ", heightStability=" + heightStability + ", mapWidth=" + mapWidth + ", mapHeight=" + mapHeight + ", mapScale=" + mapScale + ", monitorScale=" + monitorScale + ", minGenX=" + minGenX + ", maxGenX=" + maxGenX + ", minGenZ=" + minGenZ + ", maxGenZ=" + maxGenZ + ", heightScale=" + heightScale + '}';
     }
     
 }

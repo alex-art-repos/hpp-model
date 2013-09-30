@@ -15,7 +15,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hpp.terrain.TerrainModel;
-import org.hpp.terrain.TerrainPoint;
 import org.hpp.terrain.river.RiverModel;
 import org.hpp.terrain.town.TownModel;
 import org.slf4j.Logger;
@@ -75,16 +74,16 @@ public class HppModel {
     
     private double Rate_dbmiddle = 8.5291972;
     
-    private double cp1 = 0;
-    private double cp2 = 0;
-    private double cp3 = 0;
-    private double cp4 = 0;
-    private double cp5 = 0;
+    private double[] cp1 = new double[]{14382, -0.2368, -0.0598};
+    private double[] cp2 = new double[]{4906, -0.3722, 0.3866};
+    private double[] cp3 = new double[]{62246, -0.2354, -0.0587};
+    private double[] cp4 = new double[]{28164, -0.376, -0.624};
+    private double[] cp5 = new double[]{70000, -0.2354, -0.0587};
     
-    private double co1 = 0;
-    private double co2 = 0;
-    private double co3 = 0;
-    private double co4 = 0;
+    private double[] co1 = new double[]{39485, -0.1902, -0.2167};
+    private double[] co2 = new double[]{48568, -0.1867, -0.2090};
+    private double[] co3 = new double[]{31712, -0.1900, -0.2122};
+    private double[] co4 = new double[]{14062, -0.1817, -0.2082};
 
     public static final double G = 9.8; // g - gravitation const
     
@@ -303,75 +302,75 @@ public class HppModel {
         this.rate = rate;
     }
 
-    public double getCp1() {
+    public double[] getCp1() {
         return cp1;
     }
 
-    public void setCp1(double cp1) {
+    public void setCp1(double[] cp1) {
         this.cp1 = cp1;
     }
 
-    public double getCp2() {
+    public double[] getCp2() {
         return cp2;
     }
 
-    public void setCp2(double cp2) {
+    public void setCp2(double[] cp2) {
         this.cp2 = cp2;
     }
 
-    public double getCp3() {
+    public double[] getCp3() {
         return cp3;
     }
 
-    public void setCp3(double cp3) {
+    public void setCp3(double[] cp3) {
         this.cp3 = cp3;
     }
 
-    public double getCp4() {
+    public double[] getCp4() {
         return cp4;
     }
 
-    public void setCp4(double cp4) {
+    public void setCp4(double[] cp4) {
         this.cp4 = cp4;
     }
 
-    public double getCp5() {
+    public double[] getCp5() {
         return cp5;
     }
 
-    public void setCp5(double cp5) {
+    public void setCp5(double[] cp5) {
         this.cp5 = cp5;
     }
 
-    public double getCo1() {
+    public double[] getCo1() {
         return co1;
     }
 
-    public void setCo1(double co1) {
+    public void setCo1(double[] co1) {
         this.co1 = co1;
     }
 
-    public double getCo2() {
+    public double[] getCo2() {
         return co2;
     }
 
-    public void setCo2(double co2) {
+    public void setCo2(double[] co2) {
         this.co2 = co2;
     }
 
-    public double getCo3() {
+    public double[] getCo3() {
         return co3;
     }
 
-    public void setCo3(double co3) {
+    public void setCo3(double[] co3) {
         this.co3 = co3;
     }
 
-    public double getCo4() {
+    public double[] getCo4() {
         return co4;
     }
 
-    public void setCo4(double co4) {
+    public void setCo4(double[] co4) {
         this.co4 = co4;
     }
     

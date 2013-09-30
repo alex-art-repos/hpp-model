@@ -23,6 +23,8 @@ public class TerrainModel {
     private NoiseMap heightMap = null;
     
     private int pixelScale = 5; // m
+    private int mapScale = 10000; // standard scale 1:10000
+    private int monitorScale = 4; // px/mm
 
     private int heightScale = 100; // 
     
@@ -30,6 +32,11 @@ public class TerrainModel {
         super();
     }
 
+    public TerrainModel(NoiseMap theHeightMap) {
+        super();
+        heightMap = theHeightMap;
+    }
+    
     public TerrainModel(NoiseMap theHeightMap, int thePixelScale, int theHeightScale) {
         super();
         heightMap = theHeightMap;
@@ -66,6 +73,22 @@ public class TerrainModel {
 
     public void setHeightScale(int heightScale) {
         this.heightScale = heightScale;
+    }
+
+    public int getMapScale() {
+        return mapScale;
+    }
+
+    public void setMapScale(int mapScale) {
+        this.mapScale = mapScale;
+    }
+
+    public int getMonitorScale() {
+        return monitorScale;
+    }
+
+    public void setMonitorScale(int monitorScale) {
+        this.monitorScale = monitorScale;
     }
     
     public int getTerrainHeight(int x, int z) {

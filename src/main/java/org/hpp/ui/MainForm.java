@@ -56,6 +56,12 @@ public class MainForm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         algorithmValueTab = new javax.swing.JTable();
         showTownRadiusBtn = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        scaleLab = new javax.swing.JLabel();
+        showDamBtn = new javax.swing.JButton();
+        showFloodBtn = new javax.swing.JButton();
+        block2Btn = new javax.swing.JButton();
+        block3Btn = new javax.swing.JButton();
         outputParamPanel = new javax.swing.JPanel();
         mainMenu = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
@@ -204,13 +210,60 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setText("Scale:");
+
+        scaleLab.setText("1:1");
+
+        showDamBtn.setText("dam");
+        showDamBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showDamBtnActionPerformed(evt);
+            }
+        });
+
+        showFloodBtn.setText("flood");
+        showFloodBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showFloodBtnActionPerformed(evt);
+            }
+        });
+
+        block2Btn.setText("block2");
+        block2Btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                block2BtnActionPerformed(evt);
+            }
+        });
+
+        block3Btn.setText("block3");
+        block3Btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                block3BtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mapPanelBackgroundLayout = new javax.swing.GroupLayout(mapPanelBackground);
         mapPanelBackground.setLayout(mapPanelBackgroundLayout);
         mapPanelBackgroundLayout.setHorizontalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mapScroll)
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                .addComponent(jSeparator2)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(curHeightLab)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(showTownRadiusBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showDamBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(showFloodBtn)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jSeparator2))
                 .addContainerGap())
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                 .addContainerGap()
@@ -219,34 +272,41 @@ public class MainForm extends javax.swing.JFrame {
                     .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                         .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(curHeightLab)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(showTownRadiusBtn))
-                            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(algoStatusField, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                                 .addComponent(startAlgoBtn)
                                 .addGap(18, 18, 18)
-                                .addComponent(block1Btn)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(block1Btn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(block2Btn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(block3Btn)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(scaleLab)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         mapPanelBackgroundLayout.setVerticalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                 .addComponent(mapScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(scaleLab))
+                .addGap(14, 14, 14)
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(curHeightLab)
                     .addComponent(jLabel4)
-                    .addComponent(showTownRadiusBtn))
-                .addGap(2, 2, 2)
+                    .addComponent(showTownRadiusBtn)
+                    .addComponent(showDamBtn)
+                    .addComponent(showFloodBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,7 +315,9 @@ public class MainForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(startAlgoBtn)
-                    .addComponent(block1Btn))
+                    .addComponent(block1Btn)
+                    .addComponent(block2Btn)
+                    .addComponent(block3Btn))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                 .addContainerGap())
@@ -286,7 +348,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         modelPanelLayout.setVerticalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(modelSplit)
+            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
         );
 
         mainSplit.setRightComponent(modelPanel);
@@ -432,10 +494,28 @@ public class MainForm extends javax.swing.JFrame {
         formCtrl.drawTownModel();
     }//GEN-LAST:event_showTownRadiusBtnActionPerformed
 
+    private void showDamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showDamBtnActionPerformed
+        formCtrl.drawDamModel();
+    }//GEN-LAST:event_showDamBtnActionPerformed
+
+    private void showFloodBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFloodBtnActionPerformed
+        formCtrl.drawFloodModel();
+    }//GEN-LAST:event_showFloodBtnActionPerformed
+
+    private void block2BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block2BtnActionPerformed
+        formCtrl.block2Algorithm();
+    }//GEN-LAST:event_block2BtnActionPerformed
+
+    private void block3BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block3BtnActionPerformed
+        formCtrl.block3Algorithm();
+    }//GEN-LAST:event_block3BtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton algoStatusField;
     public javax.swing.JTable algorithmValueTab;
     public javax.swing.JButton block1Btn;
+    public javax.swing.JButton block2Btn;
+    public javax.swing.JButton block3Btn;
     public javax.swing.JLabel curHeightLab;
     public javax.swing.JMenuItem exitMenu;
     public javax.swing.JMenu fileMenu;
@@ -446,6 +526,7 @@ public class MainForm extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel2;
     public javax.swing.JLabel jLabel3;
     public javax.swing.JLabel jLabel4;
+    public javax.swing.JLabel jLabel5;
     public javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JPopupMenu.Separator jSeparator1;
@@ -465,6 +546,9 @@ public class MainForm extends javax.swing.JFrame {
     public javax.swing.JMenuItem saveMapMenu;
     public javax.swing.JMenuItem saveModelItem;
     public javax.swing.JMenuItem saveScreenShotItem;
+    public javax.swing.JLabel scaleLab;
+    public javax.swing.JButton showDamBtn;
+    public javax.swing.JButton showFloodBtn;
     public javax.swing.JButton showTownRadiusBtn;
     public javax.swing.JButton startAlgoBtn;
     public javax.swing.JButton syncInputToModel;

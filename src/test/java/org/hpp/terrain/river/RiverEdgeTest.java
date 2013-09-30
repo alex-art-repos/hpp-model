@@ -50,11 +50,10 @@ public class RiverEdgeTest {
         
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
         
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
+        System.out.println("Actual line = " + edge.getLine());
         
-        assertEquals(k, edge.getK(), 0.0001);
-        assertEquals(b, edge.getB(), 0.0001);
+        assertEquals(k, edge.getLine().getK(), 0.0001);
+        assertEquals(b, edge.getLine().getB(), 0.0001);
     }
     
     @Test
@@ -69,11 +68,10 @@ public class RiverEdgeTest {
         
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
         
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
+        System.out.println("Actual line = " + edge.getLine());
         
-        assertEquals(k, edge.getK(), 0.0001);
-        assertEquals(b, edge.getB(), 0.0001);
+        assertEquals(k, edge.getLine().getK(), 0.0001);
+        assertEquals(b, edge.getLine().getB(), 0.0001);
     }
     
     @Test
@@ -121,8 +119,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
+        System.out.println("Actual line = " + edge.getLine());
         
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
         
@@ -139,8 +136,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
+        System.out.println("Actual line = " + edge.getLine());
         
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
         
@@ -158,10 +154,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
-        System.out.println("Actual isSpecial = " + edge.isIsSpecial());
-        System.out.println("Actual lineX = " + edge.getLineX());
+        System.out.println("Actual line = " + edge.getLine());
         
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
         
@@ -174,10 +167,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
-        System.out.println("Actual isSpecial = " + edge.isIsSpecial());
-        System.out.println("Actual lineX = " + edge.getLineX());
+        System.out.println("Actual line = " + edge.getLine());
         
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
         
@@ -194,10 +184,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
-        System.out.println("Actual isSpecial = " + edge.isIsSpecial());
-        System.out.println("Actual lineX = " + edge.getLineX());
+        System.out.println("Actual line = " + edge.getLine());
 
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
 
@@ -215,10 +202,7 @@ public class RiverEdgeTest {
 
         RiverEdge edge = new RiverEdge(new TerrainPoint(x1, y1), new TerrainPoint(x2, y2), 10);
 
-        System.out.println("Actual K = " + edge.getK());
-        System.out.println("Actual B = " + edge.getB());
-        System.out.println("Actual isSpecial = " + edge.isIsSpecial());
-        System.out.println("Actual lineX = " + edge.getLineX());
+        System.out.println("Actual line = " + edge.getLine());
 
         List<TerrainPoint> points = edge.circleIntersection( new TerrainPoint(2, 2) , 1);
 

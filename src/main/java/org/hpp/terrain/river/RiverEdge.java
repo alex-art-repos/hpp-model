@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import org.hpp.terrain.TerrainLine;
 import org.hpp.terrain.TerrainPoint;
 
 /**
@@ -21,13 +22,12 @@ public class RiverEdge {
     private TerrainPoint stop = null;
     
     private int width = 0;
-    
-    // line y = kx + b
-    private boolean isSpecial = false; // x = val
-    private int lineX = 0;
-    private double k = 0;
-    private double b = 0;
 
+    private TerrainLine line = null;
+
+    private RiverEdge prevEdge = null;
+    private RiverEdge nextEdge = null;
+    
     public RiverEdge() {
         super();
     }
@@ -67,38 +67,30 @@ public class RiverEdge {
         this.width = width;
     }
 
-    public double getK() {
-        return k;
+    public RiverEdge getPrevEdge() {
+        return prevEdge;
     }
 
-    public void setK(double k) {
-        this.k = k;
+    public void setPrevEdge(RiverEdge prevEdge) {
+        this.prevEdge = prevEdge;
     }
 
-    public double getB() {
-        return b;
+    public RiverEdge getNextEdge() {
+        return nextEdge;
     }
 
-    public void setB(double b) {
-        this.b = b;
-    }
-
-    public boolean isIsSpecial() {
-        return isSpecial;
-    }
-
-    public void setIsSpecial(boolean isSpecial) {
-        this.isSpecial = isSpecial;
-    }
-
-    public int getLineX() {
-        return lineX;
-    }
-
-    public void setLineX(int lineX) {
-        this.lineX = lineX;
+    public void setNextEdge(RiverEdge nextEdge) {
+        this.nextEdge = nextEdge;
     }
     
+    public double length() {
+        if ( start == null || stop == null ) {
+            return 0;
+        }
+        
+        return TerrainPoint.distance( start, stop);
+    }
+
     /**
      * Finds points of intersection with circle.
      * 
@@ -109,7 +101,7 @@ public class RiverEdge {
     public List<TerrainPoint> circleIntersection(TerrainPoint center, int radius) {
         List<TerrainPoint> points = null;
         
-        if ( isSpecial ) {
+        if ( line.isIsSpecial() ) {
             points = this.specialCase(center, radius);
         } else {
             points = this.commonCase(center, radius);
@@ -135,6 +127,8 @@ public class RiverEdge {
     protected List<TerrainPoint> specialCase(TerrainPoint center, int radius) {
         int minX = center.getX() - radius, 
             maxX = center.getX() + radius;
+        
+        int lineX = line.getLineX();
         
         if ( lineX < minX || lineX > maxX ) {
             return Collections.EMPTY_LIST;
@@ -173,6 +167,9 @@ public class RiverEdge {
      * @return
      */
     protected List<TerrainPoint> commonCase(TerrainPoint center, int radius) {
+        double k = line.getK(),
+               b = line.getB();
+        
         double A = k * k + 1, 
                B = 2 * k * (b - center.getY()) - 2 * center.getX(), 
                C = center.getX() * center.getX() + 
@@ -186,7 +183,7 @@ public class RiverEdge {
             double x = -1 * B / (2 * A);
             double y = k * x + b;
             
-            TerrainPoint point1 = this.nearestPoint(x, y);
+            TerrainPoint point1 = TerrainPoint.nearestPoint(x, y);
                     
             if ( point1 != null && this.contains(point1) ) {
                 return Arrays.asList( point1 );
@@ -197,8 +194,8 @@ public class RiverEdge {
                    dY1 = k * dX1 + b,
                    dY2 = k * dX2 + b;
             
-            TerrainPoint point1 = this.nearestPoint(dX1, dY1),
-                         point2 = this.nearestPoint(dX2, dY2);
+            TerrainPoint point1 = TerrainPoint.nearestPoint(dX1, dY1),
+                         point2 = TerrainPoint.nearestPoint(dX2, dY2);
             
             List<TerrainPoint> points = new ArrayList<>(2);
             
@@ -214,45 +211,6 @@ public class RiverEdge {
         }
         
         return Collections.EMPTY_LIST;
-    }
-    
-    protected TerrainPoint nearestPoint(double x, double y) {
-        int x1 = new Double(Math.floor(x)).intValue(),
-            x2 = new Double(Math.ceil(x)).intValue(),
-            y1 = new Double(Math.floor(y)).intValue(),
-            y2 = new Double(Math.ceil(y)).intValue();
-        
-        double dist[] = new double[4];
-        
-        dist[0] = this.distance(x1, y1, x, y);
-        dist[1] = this.distance(x2, y1, x, y);
-        dist[2] = this.distance(x1, y2, x, y);
-        dist[3] = this.distance(x2, y2, x, y);
-        
-        int min = 0;
-        
-        for (int i = 0; i < dist.length; i++) {
-            if ( dist[min] > dist[i] ) {
-                min = i;
-            }
-        }
-
-        switch(min) {
-            case 0:
-                return new TerrainPoint(x1, y1);
-            case 1:
-                return new TerrainPoint(x2, y1);
-            case 2:
-                return new TerrainPoint(x1, y2);
-            case 3:
-                return new TerrainPoint(x2, y2);
-        }
-        
-        return null;
-    }
-    
-    protected double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
     }
     
     protected boolean contains(int x, int y) {
@@ -282,16 +240,14 @@ public class RiverEdge {
         if ( start == null || stop == null ) {
             return;
         }
-        
-        if ( start.getX() - stop.getX() == 0 ) {
-            isSpecial = true;
-            lineX = start.getX();
-        } else {
-            k = (start.getY() - stop.getY()) / (double)( start.getX() - stop.getX() );
-            b = start.getY() - k * start.getX();
-        }
+    
+        line = TerrainLine.createByPoints(start, stop);
     }
 
+    public TerrainLine getLine() {
+        return line;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -321,7 +277,7 @@ public class RiverEdge {
 
     @Override
     public String toString() {
-        return "RiverEdge{" + "start=" + start + ", stop=" + stop + ", width=" + width + ", k=" + k + ", b=" + b + '}';
+        return "RiverEdge{" + "\n\tstart=" + start + ",\n\tstop=" + stop + ",\n\twidth=" + width + ",\n\tline=" + line + '}';
     }
 
 }

@@ -8,11 +8,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,8 +24,10 @@ import org.hpp.model.HppAlgo;
 import org.hpp.model.HppModel;
 import org.hpp.terrain.TerrainModel;
 import org.hpp.terrain.TerrainPoint;
-import org.hpp.terrain.libnoise.util.NoiseMap;
+import org.hpp.terrain.TerrainRenderer;
+import org.hpp.terrain.TerrainTransformer;
 import org.hpp.terrain.perlin.PerlinTerrainGenerator;
+import org.hpp.terrain.river.DamModel;
 import org.hpp.terrain.river.RiverFormer;
 import org.hpp.terrain.river.RiverGen;
 import org.hpp.terrain.river.RiverModel;
@@ -40,8 +44,6 @@ import org.slf4j.LoggerFactory;
  * @author Gautama
  */
 public class MainFormCtrl extends BaseController<MainForm> {
-    public static final int HEIGHT_SCALE = 100; // 
-    
     public static final Logger log = LoggerFactory.getLogger(MainFormCtrl.class);
     
     protected BufferedImage mapImage = null;
@@ -66,6 +68,14 @@ public class MainFormCtrl extends BaseController<MainForm> {
     
     public void newModel() {
         model = new HppModel();
+        
+        try {
+            model.setRate_midleday( HppModel.loadRateMiddleDayFromFile(null) );
+        } catch (Exception exc) {
+            log.error("Can`t load middle day rate: " + exc.toString());
+            JOptionPane.showMessageDialog(this.getForm(), "Can`t load middle day rate.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
         algorithm = null;
     }
     
@@ -100,13 +110,18 @@ public class MainFormCtrl extends BaseController<MainForm> {
     }
     
     public boolean generateMap(MapGeneratorConfig mapGenCfg) {
+        if ( model == null ) {
+            JOptionPane.showMessageDialog(this.getForm(), "No model found.", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
         log.debug("Generating map for " + mapGenCfg);
         
         PerlinTerrainGenerator genMap = new PerlinTerrainGenerator();
         
         genMap.setSeed(null);
         
-        NoiseMap noiseHeightMap = genMap.getHeightMap(
+        TerrainModel terrain = genMap.getHeightMap(
                 mapGenCfg.getMapWidth(), 
                 mapGenCfg.getMapHeight(), 
                 mapGenCfg.getMinGenX(), 
@@ -114,20 +129,24 @@ public class MainFormCtrl extends BaseController<MainForm> {
                 mapGenCfg.getMinGenZ(), 
                 mapGenCfg.getMaxGenZ()
             );
-
-        genMap.invertDeeps(noiseHeightMap);
-        
-        if ( model == null ) {
-            JOptionPane.showMessageDialog(this.getForm(), "No model found.", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
         
         int pixelScale = mapGenCfg.getPixelScale();
         
-        TerrainModel terrainMap = new TerrainModel(noiseHeightMap, pixelScale, HEIGHT_SCALE);
-        model.setTerrainModel( terrainMap );
+        terrain.setPixelScale( pixelScale );
+        terrain.setHeightScale( mapGenCfg.getHeightScale() );
 
-        log.debug(String.format("Terrain map was generated[%d, %d]", terrainMap.getMinHeight(), terrainMap.getMaxHeight()));
+        terrain.setMapScale( mapGenCfg.getMapScale() );
+        terrain.setMonitorScale( mapGenCfg.getMonitorScale() );
+
+        TerrainTransformer terrainTransformer = new TerrainTransformer();
+
+        terrainTransformer.invertDeeps( terrain );
+        terrainTransformer.rotateTerrain( terrain, 10, 500 );
+        terrainTransformer.normolizeHeight(terrain);
+        
+        model.setTerrainModel( terrain );
+
+        log.debug(String.format("Terrain map was generated[%d, %d]", terrain.getMinHeight(), terrain.getMaxHeight()));
         
         RiverGen riverGen = new RiverGen();
         
@@ -140,14 +159,14 @@ public class MainFormCtrl extends BaseController<MainForm> {
         riverGen.setMinWidth( mapGenCfg.getMinRiverWidth() );
         riverGen.setMaxWidth( mapGenCfg.getMaxRiverWidth() );
         
-        TerrainPoint startPos = new TerrainPoint(terrainMap.getMapWidth()/2, 0);
+        TerrainPoint startPos = new TerrainPoint(terrain.getMapWidth()/2, 0);
         
         RiverModel river = null;
 
         if ( mapGenCfg.isIsNaturalGen() ) {
-            river = riverGen.genNaturalRiver(startPos, terrainMap);
+            river = riverGen.genNaturalRiver(startPos, terrain);
         } else {
-            river = riverGen.genRiver(startPos, terrainMap);
+            river = riverGen.genRiver(startPos, terrain);
         }
         
         if ( river == null ) {
@@ -169,14 +188,20 @@ public class MainFormCtrl extends BaseController<MainForm> {
         riverFormer.setBankHeightDelta( mapGenCfg.getBankHeightDelta() );
         riverFormer.setHeightStability( mapGenCfg.getHeightStability()/100f );
         
-        riverFormer.buildRiver(river, terrainMap);
+        riverFormer.setIsBuildBanks( mapGenCfg.isIsBuildBanks() );
+        riverFormer.setIsForcedBanks( mapGenCfg.isIsForcedBanks() );
+        riverFormer.setRiverDepthMode( mapGenCfg.getRiverDepthMode() );
+        
+        riverFormer.buildRiver(river, terrain);
         // riverFormer.traceRiver(river, terrainMap);
         
-        log.debug("River was formed.");
+        river.normolizeHeights();
+        
+        log.debug(String.format("River was formed. Naturality = %.2f %%", river.naturalIndex() * 100));
         
         TownGen townGen = new TownGen();
         
-        TownModel townModel = townGen.genTown(terrainMap, river);
+        TownModel townModel = townGen.genTown(terrain, river);
         
         log.debug("Town was generated.");
         
@@ -184,11 +209,13 @@ public class MainFormCtrl extends BaseController<MainForm> {
             model.setTownModel(townModel);
         }
         
-        mapImage = genMap.getTerrainImage( terrainMap.getInternalMap() );
+        mapImage = new TerrainRenderer().getTerrainImage( terrain );
         
         if ( townImage == null ) {
             townImage = this.loadTownImage();
         }
+        
+        this.refreshScaleInfo();
         
         return true;
     }
@@ -261,8 +288,7 @@ public class MainFormCtrl extends BaseController<MainForm> {
         }
         
         if ( model.getTerrainModel() != null ) {
-            PerlinTerrainGenerator genMap = new PerlinTerrainGenerator();
-            mapImage = genMap.getTerrainImage( model.getTerrainModel().getInternalMap() );
+            mapImage = new TerrainRenderer().getTerrainImage( model.getTerrainModel() );
             if ( mapImage != null ) {
                 this.paintMap();
             }
@@ -393,7 +419,8 @@ public class MainFormCtrl extends BaseController<MainForm> {
             if ( method.getName().startsWith( "get" ) 
                     && ( method.getReturnType() == double.class ||
                          method.getReturnType() == int.class ||
-                         method.getReturnType() == long.class
+                         method.getReturnType() == long.class ||
+                         method.getReturnType() == TerrainPoint.class
                         )
                     ) {
                 count++;
@@ -407,7 +434,8 @@ public class MainFormCtrl extends BaseController<MainForm> {
             if ( method.getName().startsWith( "get" ) 
                     && ( method.getReturnType() == double.class ||
                          method.getReturnType() == int.class ||
-                         method.getReturnType() == long.class
+                         method.getReturnType() == long.class ||
+                         method.getReturnType() == TerrainPoint.class
                         )
                     ) {
                 String rowName = method.getName().substring(3); // cut get
@@ -452,6 +480,22 @@ public class MainFormCtrl extends BaseController<MainForm> {
                 point.x, point.y, height) );
     }
     
+    public void refreshScaleInfo() {
+        if ( model == null || model.getTerrainModel() == null) {
+            return ;
+        }
+        
+        TerrainModel terrain = model.getTerrainModel();
+        
+        this.getForm().scaleLab.setText(
+                String.format("1:%d (%d px/mm) %d m/px", 
+                    terrain.getMapScale(), 
+                    terrain.getMonitorScale(),
+                    terrain.getPixelScale()
+                    )
+            );
+    }
+    
     public void drawPoint(TerrainPoint point) {
         Graphics g = this.getForm().mapPanel.getGraphics();
         
@@ -471,6 +515,37 @@ public class MainFormCtrl extends BaseController<MainForm> {
                 new Double(boxSide).intValue(), 
                 new Double(boxSide).intValue()
             );
+    }
+    
+    public void drawDamModel() {
+        DamModel dam = algorithm.getDamModel();
+
+        if ( dam == null ) {
+            return;
+        }
+        
+        Graphics g = this.getForm().mapPanel.getGraphics();
+        
+        g.drawLine(dam.getLeftPoint().getX(), dam.getLeftPoint().getY(), 
+                dam.getRightPoint().getX(), dam.getRightPoint().getY());
+    }
+    
+    public void drawFloodModel() {
+        Graphics g = this.getForm().mapPanel.getGraphics();
+
+        List<TerrainPoint> points = algorithm.getFloodArea();
+        
+        if ( points == null || points.isEmpty() ) {
+            return;
+        }
+        
+        Polygon polygon = new Polygon();
+        
+        for (TerrainPoint point : points) {
+            polygon.addPoint(point.getX(), point.getY());
+        }
+                
+        g.fillPolygon( polygon );
     }
     
     public void startHppAlgorithm() {
@@ -501,12 +576,53 @@ public class MainFormCtrl extends BaseController<MainForm> {
             JOptionPane.showMessageDialog(this.getForm(), "Block1: " + exc.toString(), 
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
+        } finally {
+            this.refreshAlgoStatus();
         }
         
-        this.refreshAlgoStatus();
         this.refreshAlgoValFromModel(null);
         
         this.drawTownModel();
+    }
+    
+    public void block2Algorithm() {
+        if ( algorithm == null ) {
+            JOptionPane.showMessageDialog(this.getForm(), "No algorithm.", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            algorithm.block2();
+        } catch (Exception exc) {
+            log.warn(LogHelper.self().printException("Algorithm.block2.", exc));
+            JOptionPane.showMessageDialog(this.getForm(), "Block2: " + exc.toString(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        } finally {
+            this.refreshAlgoStatus();
+        }
+        
+        this.refreshAlgoValFromModel(null);
+    }
+    
+    public void block3Algorithm() {
+        if ( algorithm == null ) {
+            JOptionPane.showMessageDialog(this.getForm(), "No algorithm.", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            algorithm.block3();
+        } catch (Exception exc) {
+            log.warn(LogHelper.self().printException("Algorithm.block3.", exc));
+            JOptionPane.showMessageDialog(this.getForm(), "Block3: " + exc.toString(), 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        } finally {
+            this.refreshAlgoStatus();
+        }
+        
+        this.refreshAlgoValFromModel(null);
     }
     
     public void refreshAlgoStatus() {
