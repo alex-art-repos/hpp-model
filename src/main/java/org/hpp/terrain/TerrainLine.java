@@ -147,7 +147,7 @@ public class TerrainLine {
             }
         } else {
             if ( line.isIsSpecial() ) {
-                return TerrainPoint.nearestPoint(lineX, this.getValue(lineX));
+                return TerrainPoint.nearestPoint(line.getLineX(), this.getValue(line.getLineX()));
             } else {
                 if ( Math.abs(k - line.getK()) < 0.001 ) {
                     // almost parallel

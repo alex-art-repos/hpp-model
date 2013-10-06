@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hpp.terrain.TerrainLine;
 import org.hpp.terrain.TerrainPoint;
 
@@ -17,6 +19,7 @@ import org.hpp.terrain.TerrainPoint;
  *
  * @author Gautama
  */
+@XmlRootElement
 public class RiverEdge {
     private TerrainPoint start = null;
     private TerrainPoint stop = null;
@@ -67,6 +70,7 @@ public class RiverEdge {
         this.width = width;
     }
 
+    @XmlTransient
     public RiverEdge getPrevEdge() {
         return prevEdge;
     }
@@ -75,6 +79,7 @@ public class RiverEdge {
         this.prevEdge = prevEdge;
     }
 
+    @XmlTransient
     public RiverEdge getNextEdge() {
         return nextEdge;
     }

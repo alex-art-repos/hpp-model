@@ -362,7 +362,8 @@ public class HppAlgo {
         
         NP = model.getCap_user() * 24 * 365;
         
-        damModel = this.findDam(intersection.firstPair().getEdge(), Dam_begin, 15);
+        // damModel = DamModel.findNormalizeDam(model.getTerrainModel(), intersection.firstPair().getEdge(), Dam_begin, 15);
+        damModel = DamModel.findMinimalDam(model.getTerrainModel(), intersection.firstPair().getEdge(), Dam_begin, 15);
         
         log.debug("Found dam: " + damModel + ", width = " + damModel.getWidth() );
         
@@ -498,7 +499,7 @@ public class HppAlgo {
                 Fall_cur = H;
                 P_cur = (HppModel.G * H * model.getEfficHP() * model.getRate())/1000;
                 
-                dam = this.findDam(curPair.getEdge(), Dam_cur, new Double(H).intValue());
+                dam = DamModel.findMinimalDam(model.getTerrainModel(), curPair.getEdge(), Dam_cur, new Double(H).intValue());
                 S = this.floodArea(dam);
                 
                 project = new HppProject();
@@ -693,9 +694,6 @@ public class HppAlgo {
     protected void calcRank(HppProject project) {
         double Pcur_year_ud = Popt_year_ud * project.getFall_cur();
         
-        // TODO not used
-        double Coef_p_use = (project.getP_cur() * 24 * 365) / Pcur_year_ud;
-        
         double NW = (HppModel.G * project.getFall_cur() * model.getRate() 
                 * model.getVstok() * model.getEfficHP() * 3600 * 24 * 365) / 1000000;
         
@@ -742,7 +740,6 @@ public class HppAlgo {
         return true;
     }
     
-    // TODO exclude square of river
     protected double floodArea(DamModel dam) throws Exception {
         if ( dam == null ) {
             throw new Exception("No dam model.");
@@ -786,7 +783,7 @@ public class HppAlgo {
         
         log.debug(String.format("Upper dam point: %s", nextDamPoint));
         
-        upperDam = this.findDam(curEdge, nextDamPoint, 1);
+        upperDam = DamModel.findMinimalDam(model.getTerrainModel(), curEdge, nextDamPoint, 1);
         TerrainLine upperDamLine = upperDam.getLine();
         
         log.debug(String.format("Upper dam : %s", upperDam));
@@ -803,8 +800,8 @@ public class HppAlgo {
             log.debug("Corrected upper dam line: " + upperDamLine);
         } 
         
-        leftPoint = this.findLeftBank(upperDamLine, nextDamPoint);
-        rightPoint = this.findRightBank(upperDamLine, nextDamPoint);
+        leftPoint = DamModel.findLeftBank(model.getTerrainModel(), upperDamLine, nextDamPoint);
+        rightPoint = DamModel.findRightBank(model.getTerrainModel(), upperDamLine, nextDamPoint);
         
         floodAreaPoints = new ArrayList<>();
         
@@ -848,7 +845,7 @@ public class HppAlgo {
             log.debug("River square : " + riverSquare);
             if (riverSquare < floodSquare) {
                 log.debug(String.format("Real square %f, corrected %f", floodSquare, (floodSquare-riverSquare)));
-                // floodSquare -= riverSquare;
+                floodSquare -= riverSquare;
             }
         }
         
@@ -893,113 +890,4 @@ public class HppAlgo {
         return closestPoint;
     }
     
-    protected DamModel findDam(RiverEdge edge, TerrainPoint point, int damHeight) throws Exception {
-        TerrainLine edgeLine = edge.getLine(),
-                    damLine = edgeLine.normalLineByPoint(point);
-        
-        // log.debug("Dam line: " + damLine + ", point = " + point);
-        
-        TerrainPoint leftBankPoint = this.findLeftBank(damLine, point), 
-                     rightBankPoint = this.findRightBank(damLine, point);
-        
-        // log.debug("Dam banks: " + leftBankPoint + ", " + rightBankPoint);
-        
-        if ( leftBankPoint == null || rightBankPoint == null ) {
-            throw new Exception("Can`t find river banks.");
-        }
-        
-        TerrainPoint leftDamPoint = this.findLeftDamPoint(damLine, leftBankPoint, damHeight), 
-                     rightDamPoint = this.findRightDamPoint(damLine, rightBankPoint, damHeight);
-        
-        if ( leftDamPoint == null || rightDamPoint == null ) {
-            throw new Exception("Can`t find dam points.");
-        }
-        
-        DamModel curDamModel = new DamModel(damLine, leftDamPoint, rightDamPoint);
-        curDamModel.setHeight(damHeight);
-        curDamModel.setRiverIntersectEdge(edge);
-        curDamModel.setRiverIntersectPoint( point );
-        
-        return curDamModel;
-    }
-    
-    protected TerrainPoint findLeftBank(TerrainLine damLine, TerrainPoint point) {
-        TerrainModel terrain = model.getTerrainModel();
-        
-        TerrainPoint curPoint = damLine.nextLeftPoint(point);
-        
-        if ( !terrain.contains(curPoint) ) {
-            return null;
-        }
-        
-        while(terrain.getTerrainHeight(curPoint) == TerrainModel.RIVER_MARKER_HEIGHT) {
-            curPoint = damLine.nextLeftPoint(curPoint);
-            if ( !terrain.contains(curPoint) ) {
-                return null;
-            }
-        }
-        
-        return curPoint;
-    }
-    
-    protected TerrainPoint findRightBank(TerrainLine damLine, TerrainPoint point) {
-        TerrainModel terrain = model.getTerrainModel();
-        
-        TerrainPoint curPoint = damLine.nextRightPoint(point);
-        
-        if ( !terrain.contains(curPoint) ) {
-            return null;
-        }
-        
-        while(terrain.getTerrainHeight(curPoint) == TerrainModel.RIVER_MARKER_HEIGHT) {
-            curPoint = damLine.nextRightPoint(curPoint);
-            if ( !terrain.contains(curPoint) ) {
-                return null;
-            }
-        }
-        
-        return curPoint;
-    }
-    
-    protected TerrainPoint findLeftDamPoint(TerrainLine damLine, TerrainPoint point, int damHeight) {
-        TerrainModel terrain = model.getTerrainModel();
-        
-        TerrainPoint curPoint = damLine.nextLeftPoint(point);
-        
-        int baseHeight = terrain.getTerrainHeight(point);
-        
-        if ( !terrain.contains(curPoint) ) {
-            return null;
-        }
-        
-        while(terrain.getTerrainHeight(curPoint) - baseHeight < damHeight) {
-            curPoint = damLine.nextLeftPoint(curPoint);
-            if ( !terrain.contains(curPoint) ) {
-                return null;
-            }
-        }
-        
-        return curPoint;
-    }
-    
-    protected TerrainPoint findRightDamPoint(TerrainLine damLine, TerrainPoint point, int damHeight) {
-        TerrainModel terrain = model.getTerrainModel();
-        
-        TerrainPoint curPoint = damLine.nextRightPoint(point);
-        
-        int baseHeight = terrain.getTerrainHeight(point);
-        
-        if ( !terrain.contains(curPoint) ) {
-            return null;
-        }
-        
-        while(terrain.getTerrainHeight(curPoint) - baseHeight < damHeight) {
-            curPoint = damLine.nextRightPoint(curPoint);
-            if ( !terrain.contains(curPoint) ) {
-                return null;
-            }
-        }
-        
-        return curPoint;
-    }
 }

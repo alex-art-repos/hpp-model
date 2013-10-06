@@ -411,6 +411,14 @@ public class RiverModel {
         
         RiverModel model = (RiverModel)unmarshaller.unmarshal(new File(fileName == null ? DEF_FILE_NAME : fileName));
         
+        if ( model != null ) {
+            List<RiverEdge> edges = model.getChannelEdges();
+            for (int i = 0 ; i < edges.size() - 1; i++ ) {
+                edges.get(i).setNextEdge( edges.get(i+1) );
+                edges.get(i+1).setPrevEdge(edges.get(i) );
+            }
+        }
+        
         return model;
     }
 }

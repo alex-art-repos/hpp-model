@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -26,7 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 @XmlRootElement
 public class HppModel {
-    @XmlTransient
     private static Logger log = LoggerFactory.getLogger(HppModel.class);
     
     public static final String DEF_FILE_NAME = "hpp-model.xml";
@@ -86,6 +88,26 @@ public class HppModel {
     private double[] co4 = new double[]{14062, -0.1817, -0.2082};
 
     public static final double G = 9.8; // g - gravitation const
+    
+    public static final Map<String, String> UNITS;
+    
+    static {
+        Map<String, String> map = new HashMap<>();
+
+        map.put("Dmax", "km");
+        map.put("Pmin", "watt");
+        map.put("Pmax", "watt");
+        map.put("Cost", "mln. rub");
+        map.put("Rate_min", "m^3/s");
+        map.put("Rate_max", "m^3/s");
+        map.put("Rate", "m^3/s");
+        map.put("Vstok", "%");
+        map.put("RangeDER", "m");
+        map.put("MaxLenTub", "km");
+        map.put("Cap_user", "MWatt");
+        
+        UNITS = Collections.unmodifiableMap(map);
+    }
     
     public HppModel() {
         super();

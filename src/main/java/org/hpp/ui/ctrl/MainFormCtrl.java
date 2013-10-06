@@ -222,6 +222,10 @@ public class MainFormCtrl extends BaseController<MainForm> {
             townDrawObj.setIsShow(false);
             
             this.getForm().mapPanel.addDrawObj(townDrawObj);
+        } else {
+            if ( model.getTownModel() != null ) {
+                townDrawObj.setPos( model.getTownModel().getCenter() );
+            }
         }
         
         this.refreshScaleInfo();
@@ -284,6 +288,8 @@ public class MainFormCtrl extends BaseController<MainForm> {
             }
         }
         
+        this.refreshScaleInfo();
+        
         JOptionPane.showMessageDialog(this.getForm(), "Model loaded from " + 
                 HppModel.DEF_FILE_NAME, "Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -344,6 +350,10 @@ public class MainFormCtrl extends BaseController<MainForm> {
                     rowValue = method.invoke(curModel, (Object[]) null);
                 } catch (Exception exc) {
                     log.error("Can`t read value: (" + rowName + ") - " + exc.toString());
+                }
+                
+                if ( HppModel.UNITS.get(rowName) != null ) {
+                    rowName += ", " + HppModel.UNITS.get(rowName);
                 }
                 
                 tableModel.setValueAt(rowName, rowInd, 0);
@@ -498,6 +508,14 @@ public class MainFormCtrl extends BaseController<MainForm> {
         }
         
         double radius = model.kmToPx( model.getDmax() );
+        
+        if ( townDrawObj == null ) {
+            townDrawObj = new TownDrawObj();
+            townDrawObj.setImage( this.loadTownImage() );
+            townDrawObj.setIsShow(false);
+            
+            this.getForm().mapPanel.addDrawObj(townDrawObj);
+        }
         
         if ( townDrawObj != null ) {
             townDrawObj.setPos( model.getTownModel().getCenter() );

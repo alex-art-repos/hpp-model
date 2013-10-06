@@ -107,10 +107,10 @@ public class TerrainModel {
         heightMap.setValue(x, z, y/(double)heightScale);
     }
     
-    public int getTerrainHeight(TerrainPoint TerrainPoint) {
+    public int getTerrainHeight(TerrainPoint point) {
         this.checkState();
         
-        double value = heightMap.getValue(TerrainPoint.getX(), TerrainPoint.getY());
+        double value = heightMap.getValue(point.getX(), point.getY());
         
         value *= heightScale;
         
