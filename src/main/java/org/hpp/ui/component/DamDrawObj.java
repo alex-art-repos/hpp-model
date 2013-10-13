@@ -5,10 +5,13 @@
 package org.hpp.ui.component;
 
 import java.awt.Graphics;
+import java.awt.Polygon;
 import java.awt.image.ImageObserver;
+import java.util.List;
 import org.hpp.model.HppAlgo;
 import org.hpp.terrain.TerrainPoint;
 import org.hpp.terrain.river.DamModel;
+import org.hpp.terrain.river.FloodInfo;
 
 /**
  *
@@ -18,6 +21,8 @@ public class DamDrawObj implements IDrawObject {
     private HppAlgo algorithm = null;
 
     private boolean isShow = true;
+    
+    private boolean isShowFlood = false;
     
     public DamDrawObj() {
         super();
@@ -44,6 +49,14 @@ public class DamDrawObj implements IDrawObject {
     public void setAlgorithm(HppAlgo algorithm) {
         this.algorithm = algorithm;
     }
+
+    public boolean isShowFlood() {
+        return isShowFlood;
+    }
+
+    public void setIsShowFlood(boolean isShowFlood) {
+        this.isShowFlood = isShowFlood;
+    }
     
     @Override
     public void paint(Graphics g, ImageObserver imgObs) {
@@ -51,7 +64,13 @@ public class DamDrawObj implements IDrawObject {
             return;
         }
         
-        DamModel dam = algorithm.getDamModel();
+        FloodInfo flood = algorithm.getBestProjectFlood();
+        
+        if ( flood == null ) {
+            return;
+        }
+        
+        DamModel dam = flood.getDam();
 
         if ( dam == null ) {
             return;
@@ -60,19 +79,35 @@ public class DamDrawObj implements IDrawObject {
         g.drawLine(dam.getLeftPoint().getX(), dam.getLeftPoint().getY(), 
                 dam.getRightPoint().getX(), dam.getRightPoint().getY());
         
-        dam = algorithm.getUpperDam();
+        dam = flood.getUpperDam();
         
         if ( dam != null ) {
             g.drawLine(dam.getLeftPoint().getX(), dam.getLeftPoint().getY(), 
                     dam.getRightPoint().getX(), dam.getRightPoint().getY());
         }
         
-        if ( algorithm.getTrapezeHeight() != null ) {
-            TerrainPoint point1 = algorithm.getTrapezeHeight().get(0),
-                         point2 = algorithm.getTrapezeHeight().get(1);
+        if ( flood.getTrapezeHeight() != null ) {
+            TerrainPoint point1 = flood.getTrapezeHeight().get(0),
+                         point2 = flood.getTrapezeHeight().get(1);
             
             g.drawLine(point1.getX(), point1.getY(), 
                     point2.getX(), point2.getY());
+        }
+        
+        if ( isShowFlood ) {
+            List<TerrainPoint> points = flood.getFloodAreaPoints();
+
+            if ( points == null || points.isEmpty() ) {
+                return;
+            }
+
+            Polygon polygon = new Polygon();
+
+            for (TerrainPoint point : points) {
+                polygon.addPoint(point.getX(), point.getY());
+            }
+
+            g.fillPolygon( polygon );
         }
     }
     

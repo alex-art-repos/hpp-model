@@ -109,7 +109,7 @@ public class DamModel {
      */
     public static DamModel findMinimalDam(TerrainModel terrain, RiverEdge edge, TerrainPoint point, int damHeight) throws Exception {
         TerrainLine edgeLine = edge.getLine(),
-                    damLine = edgeLine.normalLineByPoint(point);
+                    damLine;
         
         // log.debug("Dam line: " + damLine + ", point = " + point);
         
@@ -118,13 +118,17 @@ public class DamModel {
         TerrainPoint leftBankPoint = null, rightBankPoint = null;
         
         if ( riverSection.isEmpty() ) {
-            log.debug("fineDam: default algorithm.");
+            log.debug("findDam: default algorithm");
+            damLine = edgeLine.normalLineByPoint(point);
             leftBankPoint = DamModel.findLeftBank(terrain, damLine, point);
             rightBankPoint = DamModel.findRightBank(terrain, damLine, point);
+            log.debug("findDam: damLine = " + damLine + ", left=" + leftBankPoint + ", right=" + rightBankPoint);
         } else {
-            log.debug("fineDam: used shortest section.");
+            log.debug("findDam: used shortest section.");
             leftBankPoint = riverSection.get(0); 
             rightBankPoint = riverSection.get(1);
+            damLine = TerrainLine.createByPoints(leftBankPoint, rightBankPoint);
+            log.debug("findDam: damLine = " + damLine + ", left=" + leftBankPoint + ", right=" + rightBankPoint);
         }
         
         // log.debug("Dam banks: " + leftBankPoint + ", " + rightBankPoint);

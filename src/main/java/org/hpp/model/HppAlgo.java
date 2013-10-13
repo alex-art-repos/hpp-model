@@ -5,14 +5,21 @@
 package org.hpp.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.hpp.terrain.TerrainLine;
 import org.hpp.terrain.TerrainModel;
 import org.hpp.terrain.TerrainPoint;
 import org.hpp.terrain.river.DamModel;
+import org.hpp.terrain.river.FloodInfo;
 import org.hpp.terrain.river.RiverEdge;
 import org.hpp.terrain.river.RiverModel;
 import org.hpp.terrain.river.RiverRange;
+import org.hpp.terrain.river.TubeInfo;
+import org.hpp.utils.LogHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,178 +36,25 @@ public class HppAlgo {
         DAM, DERIVATE;
     }
     
-    public static class HppProject {
-        private double[] cp;
-        private double[] co;
-        
-        private HydroPlant plantType;
-        
-        private double Cc;
-        
-        private double Cc_tot ; // rub
-        
-        private double Cem; // rub on kWt
-        
-        private double Cem_tot; // rub
-        
-        private double Tc;
-        
-        private double Tc_tot;
-        
-        private double P_cur;
-        private double Fall_cur;
-        
-        private RiverRange.Pair pair;
-        
-        private double floodS;
-        private DamModel dam;
-        
-        private double tubLen = 0;
+    public static final Map<String, String> UNITS;
     
-        private double rank;
+    static {
+        Map<String, String> map = new HashMap<>();
 
-        public HppProject() {
-            super();
-        }
-
-        public HppProject(double[] cp, double[] co) {
-            this.cp = cp;
-            this.co = co;
-        }
-
-        public double[] getCp() {
-            return cp;
-        }
-
-        public void setCp(double[] cp) {
-            this.cp = cp;
-        }
-
-        public double[] getCo() {
-            return co;
-        }
-
-        public void setCo(double[] co) {
-            this.co = co;
-        }
-
-        public HydroPlant getPlantType() {
-            return plantType;
-        }
-
-        public void setPlantType(HydroPlant plantType) {
-            this.plantType = plantType;
-        }
-
-        public double getCc() {
-            return Cc;
-        }
-
-        public void setCc(double Cc) {
-            this.Cc = Cc;
-        }
-
-        public double getCc_tot() {
-            return Cc_tot;
-        }
-
-        public void setCc_tot(double Cc_tot) {
-            this.Cc_tot = Cc_tot;
-        }
-
-        public double getCem() {
-            return Cem;
-        }
-
-        public void setCem(double Cem) {
-            this.Cem = Cem;
-        }
-
-        public double getCem_tot() {
-            return Cem_tot;
-        }
-
-        public void setCem_tot(double Cem_tot) {
-            this.Cem_tot = Cem_tot;
-        }
-
-        public double getTc() {
-            return Tc;
-        }
-
-        public void setTc(double Tc) {
-            this.Tc = Tc;
-        }
-
-        public double getTc_tot() {
-            return Tc_tot;
-        }
-
-        public void setTc_tot(double Tc_tot) {
-            this.Tc_tot = Tc_tot;
-        }
-
-        public double getP_cur() {
-            return P_cur;
-        }
-
-        public void setP_cur(double P_cur) {
-            this.P_cur = P_cur;
-        }
-
-        public double getFall_cur() {
-            return Fall_cur;
-        }
-
-        public void setFall_cur(double Fall_cur) {
-            this.Fall_cur = Fall_cur;
-        }
-
-        public RiverRange.Pair getPair() {
-            return pair;
-        }
-
-        public void setPair(RiverRange.Pair pair) {
-            this.pair = pair;
-        }
-
-        public double getFloodS() {
-            return floodS;
-        }
-
-        public void setFloodS(double floodS) {
-            this.floodS = floodS;
-        }
-
-        public DamModel getDam() {
-            return dam;
-        }
-
-        public void setDam(DamModel dam) {
-            this.dam = dam;
-        }
-
-        public double getTubLen() {
-            return tubLen;
-        }
-
-        public void setTubLen(double tubLen) {
-            this.tubLen = tubLen;
-        }
-
-        public double getRank() {
-            return rank;
-        }
-
-        public void setRank(double rank) {
-            this.rank = rank;
-        }
-
-        @Override
-        public String toString() {
-            return "HppProject{" + "cp=" + cp + ", co=" + co + ", plantType=" + plantType + ", Cc=" + Cc + ", Cc_tot=" + Cc_tot + ", Cem=" + Cem + ", Cem_tot=" + Cem_tot + ", Tc=" + Tc + ", Tc_tot=" + Tc_tot + ", P_cur=" + P_cur + ", Fall_cur=" + Fall_cur + ", pair=" + pair + ", floodS=" + floodS + ", dam=" + dam + ", tubLen=" + tubLen + ", rank=" + rank + '}';
-        }
-
+        map.put("GenRate_norm0", "m^3/s");
+        map.put("Popt_year_ud", "MWatt/h");
+        map.put("Dam_begin", "point");
+        map.put("Dam_end", "point");
+        map.put("LengthRB", "km");
+        map.put("Fall_min", "m");
+        map.put("Fall_max", "m");
+        map.put("Range_dam", "px");
+        map.put("Range_fall", "m");
+        map.put("NP", "MWatt");
+        map.put("S_cal", "m^2");
+        map.put("Range_rate", "m^3/s");
+        
+        UNITS = Collections.unmodifiableMap(map);
     }
     
     public static final Logger log = LoggerFactory.getLogger( HppAlgo.class );
@@ -224,19 +78,15 @@ public class HppAlgo {
     
     private double NP = 0;
     
-    private double S_cal = 0;
+    private FloodInfo calFlood = null; // calibrating flood
     
     private RiverRange intersection = null;
-    private DamModel damModel = null;
-    private DamModel upperDam;
-    private List<TerrainPoint> trapezeHeight = null;
-    private List<TerrainPoint> floodAreaPoints = null;
     
     private double GenRate_norm0 = 0;
     private double Range_rate = 0;
     private double Popt_year_ud = 0;
     
-    private List<HppProject> projects = null;
+    private List<HppProject> projects = new ArrayList<>();
     private HppProject bestProject = null;
     
     public HppAlgo(HppModel theModel) {
@@ -292,24 +142,12 @@ public class HppAlgo {
         return intersection;
     }
 
-    public DamModel getDamModel() {
-        return damModel;
-    }
-
-    public DamModel getUpperDam() {
-        return upperDam;
-    }
-
-    public List<TerrainPoint> getTrapezeHeight() {
-        return trapezeHeight;
-    }
-
-    public List<TerrainPoint> getFloodArea() {
-        return floodAreaPoints;
+    public FloodInfo getBestProjectFlood() {
+        return bestProject == null ? null : bestProject.getFlood();
     }
 
     public double getS_cal() {
-        return S_cal;
+        return calFlood == null ? 0 : calFlood.getFloodArea();
     }
 
     public double getGenRate_norm0() {
@@ -328,7 +166,21 @@ public class HppAlgo {
         return bestProject;
     }
 
+    public void setBestProject(HppProject fakeProj) {
+        bestProject = fakeProj;
+    }
+    
+    public List<HppProject> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<HppProject> fakeProjs) {
+        projects = fakeProjs;
+    }
+    
     public void block1() throws Exception {
+        status = Status.FAIL;
+        
         if ( this.checkIntersection() ) {
             Dam_begin = intersection.firstPoint();
             Dam_end = intersection.lastPoint();
@@ -343,7 +195,6 @@ public class HppAlgo {
                 Dam_end = edges.get(edges.size() - 1).getStop();
                 log.debug(String.format("Used whole river."));
             } else {
-                status = Status.FAIL;
                 throw new Exception("No intersection.");
             }
         }
@@ -356,25 +207,43 @@ public class HppAlgo {
         
         Fall_max = 1000 * ( model.getPmax()/( model.getRate() * HppModel.G * model.getEfficHP() ) );
         
-        Range_dam = LengthRB / model.getMaxCountRD();
+        Range_dam = model.toPx( (LengthRB*1000) / model.getMaxCountRD() );
         
         Range_fall = (Fall_max - Fall_min)/ model.getMaxCountRF();
         
         NP = model.getCap_user() * 24 * 365;
         
         // damModel = DamModel.findNormalizeDam(model.getTerrainModel(), intersection.firstPair().getEdge(), Dam_begin, 15);
-        damModel = DamModel.findMinimalDam(model.getTerrainModel(), intersection.firstPair().getEdge(), Dam_begin, 15);
+        DamModel damModel = null;
         
-        log.debug("Found dam: " + damModel + ", width = " + damModel.getWidth() );
+        try {
+            damModel = DamModel.findMinimalDam(
+                    model.getTerrainModel(), 
+                    intersection.firstPair().getEdge(), 
+                    Dam_begin, 
+                    new Double(Fall_min).intValue());
+        } catch (Exception exc) {
+            log.warn(LogHelper.self().printException("Can`y find init dam. ", exc));
+        }
         
-        S_cal = this.floodArea(damModel);
+        log.debug("Found dam: " + damModel + ", width = " + (damModel == null ? 0 : damModel.getWidth()) );
+
+        if ( damModel != null ) {
+            calFlood = this.floodArea(damModel);
+        } else {
+            calFlood = null;
+        }
         
-        log.debug(String.format("Flood area: %f m^2", S_cal));
+        log.debug(String.format("Flood area: %f m^2", calFlood));
+
+        log.debug("BLOCK1[" + new Date() + "]: " + this);
         
         status = Status.OK;
     }
     
     public void block2() throws Exception {
+        status = Status.FAIL;
+        
         GenRate_norm0 = model.getRate() * model.getVstok();
         
         log.debug("GenRate_norm0 = " + GenRate_norm0);
@@ -394,20 +263,14 @@ public class HppAlgo {
                GenRate_day, NormRatePart, KPD_day, Fall_ud = 1,
                Phmid_ud, // Wt
                Pday_ud, //Wt/h
-               Pyear_ud = 0, // MWt/h
-               GenRateNorm_opt
-                ;
-        
-        double Pday_udMas[] = new double[rateMas.length],
-               GenRateNormMas[] = new double[rateMas.length];
+               Pyear_ud = 0 // MWt/h
+               ;
         
         for (int CountRR = 0; CountRR < model.getMaxCountRR() ; CountRR++) {
             for (int day = 0; day < rateMas.length ; day++) {
                 Rate_middleday = (model.getRate_dbmiddle() * model.getRate())/ rateMas[day];
 
                 GenRateNorm = GenRate_norm0 - Range_rate * CountRR; // ???
-
-                GenRateNormMas[day] = GenRateNorm;
 
                 double rateMD_Vstok = Rate_middleday * model.getVstok();
                 if ( rateMD_Vstok >= GenRateNorm ) {
@@ -426,33 +289,44 @@ public class HppAlgo {
 
                 Pday_ud = Phmid_ud * 24;
 
-                Pday_udMas[day] = Pday_ud;
-
                 Pyear_ud += Pday_ud;
             }
             Pyear_ud = Pyear_ud / 1000000;
             
             if ( Popt_year_ud < Pyear_ud ) {
                 Popt_year_ud = Pyear_ud;
-                // GenRateNorm_opt
             }
         }
+        
+        log.debug("BLOCK2[" + new Date() + "]: " + this);
+        
+        status = Status.OK;
     }
     
     public void block3() throws Exception {
+        status = Status.FAIL;
+        
+        projects.clear();
+        
         this.buildDamProjects();
         this.buildDerivateProjects();
         
         this.findBestProject();
+        
+        log.debug("BLOCK3[" + new Date() + "]: " + this);
+        
+        log.debug("BLOCK3[" + new Date() + "]: Project count = " + projects.size());
+        
+        status = Status.OK;
     }
 
     protected void findBestProject() {
-        if ( projects == null || projects.isEmpty() ) {
+        if ( projects.isEmpty() ) {
             bestProject = null;
             return;
         }
         
-        double rank = Double.MIN_VALUE;
+        double rank = projects.get(0).getRank();
         
         for (HppProject project : projects) {
             if ( project.getRank() > rank ) {
@@ -463,10 +337,12 @@ public class HppAlgo {
     }
     
     protected void buildDamProjects() throws Exception {
+        log.debug("Start building DAM projects.");
+        
         int Count_rd = 0, Count_rf = 0;
         
         TerrainPoint Dam_cur = Dam_begin;
-        double curDist = 0, Hmin, H, Fall_cur, P_cur, S;
+        double curDist = 0, Hmin, H, Fall_cur, P_cur;
         RiverRange.Pair curPair = null;
         
         RiverModel river = model.getRiverModel();
@@ -474,10 +350,9 @@ public class HppAlgo {
         DamModel dam = null;
         HppProject project = null;
         
-        projects = new ArrayList<>();
-        
-        for (; Count_rd < model.getMaxCountRD(); Count_rd++) {
-            curDist += Range_dam * Count_rd;
+        for (Count_rd = 0; Count_rd < model.getMaxCountRD(); Count_rd++) {
+            curDist = Range_dam * Count_rd;
+            log.debug(String.format("count[%d,%d]: dist = %f", Count_rd, Count_rf, curDist));
 
             curPair = river.findPointByDistance(
                     intersection.firstPair().getEdge(),
@@ -485,12 +360,22 @@ public class HppAlgo {
                     curDist,
                     DISTANCE_DELTA);
 
+            log.debug(String.format("River pair: %s", curPair));
+            if ( curPair == null ) {
+                log.debug("No point for distance: " + intersection.firstPoint() + ", " + curDist);
+                continue;
+            }
+            
             Dam_cur = curPair.firstPoint();
 
             Hmin = Fall_min;
             
-            for (; Count_rf < model.getMaxCountRF(); Count_rf++) {
+            log.debug(String.format("Hmin=%f, point=%s", Hmin, Dam_cur));
+            
+            for (Count_rf = 0; Count_rf < model.getMaxCountRF(); Count_rf++) {
                 H = Hmin + Count_rf * Range_fall;
+                
+                log.debug(String.format("H=%f, count_rf=%d", H, Count_rf));
                 
                 if ( H > Fall_max ) {
                     break;
@@ -499,8 +384,25 @@ public class HppAlgo {
                 Fall_cur = H;
                 P_cur = (HppModel.G * H * model.getEfficHP() * model.getRate())/1000;
                 
-                dam = DamModel.findMinimalDam(model.getTerrainModel(), curPair.getEdge(), Dam_cur, new Double(H).intValue());
-                S = this.floodArea(dam);
+                FloodInfo flood = null;
+                try {
+                    dam = DamModel.findMinimalDam(model.getTerrainModel(), curPair.getEdge(), Dam_cur, new Double(H).intValue());
+                    flood = this.floodArea(dam);
+                } catch (Exception exc) {
+                    log.debug(LogHelper.self().printException("No dam or flood for " + 
+                            Dam_cur + ", H = " + H, exc));
+                    continue;
+                }
+
+                if ( flood != null ) {
+                    if ( calFlood == null ) {
+                        calFlood = flood;
+                    }
+                } else {
+                    continue;
+                }
+                
+                log.debug(String.format("Found flood: %s", flood));
                 
                 project = new HppProject();
                 
@@ -509,16 +411,20 @@ public class HppAlgo {
                 project.setPair( curPair );
                 project.setPlantType( HydroPlant.DAM );
                 
-                project.setFloodS(S);
+                project.setFlood(flood);
                 project.setDam(dam);
                 
                 this.calcCost(project);
                 
-                if ( project.getTc_tot() > model.getCost() ) {
+                log.debug(String.format("Test project: %s", project));
+                
+                if ( project.getTc_tot() > model.getCost() * 1000_000 ) { // cost - mln rub
                     break;
                 }
                 
                 this.calcRank(project);
+                
+                log.debug(String.format("Save project: %s", project));
                 
                 projects.add(project);
             }
@@ -526,48 +432,59 @@ public class HppAlgo {
     }
     
     protected void buildDerivateProjects() throws Exception {
+        log.debug("Start building DERIVATE projects.");
+        
         int Count_rd = 0, Count_rf = 0,
             H_dam_cur = 0, H_dem_end_cur = 0;
         
-        TerrainPoint Dam_cur = Dam_begin, Dam_end_cur;
-        double curDist = 0, curEndDist = 0, Hmin, H, Fall_cur, P_cur, 
-               intersectLength = intersection.length(), 
-               tubLen = 0;
-        RiverRange.Pair curPair = null, curEndPair = null;
-        
         RiverModel river = model.getRiverModel();
 
+        TerrainPoint Dam_cur = Dam_begin, Dam_end_cur;
+        double curDist = 0, curEndDist = 0, Fall_cur, P_cur, 
+               intersectLength = river.getRiverRangeLength(intersection), 
+               tubLen_km = 0,
+               rangeDer = model.toPx( model.getRangeDER() );
+        RiverRange.Pair curPair = null, curEndPair = null;
+        
         HppProject project = null;
         
-        projects = new ArrayList<>();
-
+        log.debug(String.format("intersectLength = %f px", intersectLength));
+            
     COUNT_RD:
-        for (; Count_rd < model.getMaxCountRD(); Count_rd++) {
-            curDist += Range_dam * Count_rd;
+        for (Count_rd = 0; Count_rd < model.getMaxCountRD(); Count_rd++) {
+            curDist = Range_dam * Count_rd;
 
+            log.debug(String.format("count[%d,%d]: dist = %f", Count_rd, Count_rf, curDist));
+            
             curPair = river.findPointByDistance(
                     intersection.firstPair().getEdge(),
                     intersection.firstPoint(),
                     curDist,
                     DISTANCE_DELTA);
 
+            log.debug(String.format("Tube start pair: %s", curPair));
+            
             Dam_cur = curPair.firstPoint();
             Dam_end_cur = Dam_cur;
             
-            if ( curDist + model.getRangeDER() > intersectLength ) {
+            if ( curDist + rangeDer > intersectLength ) {
                 break;
             }
 
-            for (; Count_rf < model.getMaxCountRF(); Count_rf++) {
+            for (Count_rf = 0; Count_rf < model.getMaxCountRF(); Count_rf++) {
                 Fall_cur = Fall_min + Count_rf * Range_fall;
 
                 curEndDist = curDist;
                 
+                log.debug(String.format("count_rf=%d, Fall_cur=%f,curEndDist= %f", Count_rf, Fall_cur, curEndDist));
+                
                 while (curEndDist <= intersectLength) {
-                    curEndDist += model.getRangeDER();
+                    curEndDist += rangeDer;
+                    
+                    log.debug(String.format("curEndDist = %f", curEndDist));
                     
                     if ( curEndDist > intersectLength ) {
-                        break COUNT_RD;
+                        continue COUNT_RD;
                     }
                     
                     curEndPair = river.findPointByDistance(
@@ -576,17 +493,23 @@ public class HppAlgo {
                             curEndDist, 
                             DISTANCE_DELTA);
 
+                    log.debug(String.format("End river pair: %s", curEndPair));
+                    
                     Dam_end_cur = curEndPair.firstPoint();
 
                     H_dam_cur = this.findHeight(Dam_cur);
                     H_dem_end_cur = this.findHeight(Dam_end_cur);
                     
-                    tubLen = TerrainPoint.distance3D(
-                            Dam_cur, H_dam_cur, 
-                            Dam_end_cur, H_dem_end_cur);
+                    double tubLen = TerrainPoint.distance3D(
+                                Dam_cur, new Double(model.toPx( H_dam_cur )).intValue(), 
+                                Dam_end_cur, new Double(model.toPx( H_dem_end_cur )).intValue()
+                            );
 
-                    if ( tubLen > model.getMaxLenTub() ) {
-                        break COUNT_RD;
+                    tubLen_km = model.toKm(tubLen);
+                    log.debug(String.format("TubLen: %f, %f km", tubLen, tubLen_km));
+                    
+                    if ( tubLen_km > model.getMaxLenTub() ) { // km
+                        continue COUNT_RD;
                     }
                     
                     if ( Math.abs( H_dam_cur - H_dem_end_cur ) >= Fall_cur ) {
@@ -607,15 +530,19 @@ public class HppAlgo {
                 project.setPair( curPair );
                 project.setPlantType( HydroPlant.DERIVATE );
                 
-                project.setTubLen( tubLen );
+                project.setTubeInfo( new TubeInfo(Dam_cur, Dam_end_cur, tubLen_km) );
                 
                 this.calcCost(project);
                 
-                if ( project.getTc_tot() > model.getCost() ) {
+                log.debug(String.format("Test project: %s", project));
+                
+                if ( project.getTc_tot() > model.getCost() * 1000_000 ) { // mln. rub
                     break;
                 }
                 
                 this.calcRank(project);
+                
+                log.debug(String.format("Save project: %s", project));
                 
                 projects.add(project);
             }
@@ -711,9 +638,12 @@ public class HppAlgo {
                         model.getWc() *  model.getWc() *  model.getwTc() *  model.getwTc()
                     );
         
+        double plantTypeKoef = project.getPlantType() == HydroPlant.DAM 
+                ? ( model.getwS() * project.getFloodS() ) / calFlood.getFloodArea()
+                : ( model.getwL() * model.toKm(project.getTubLen()) ) / model.getMaxLenTub();
+        
         double rank = rw * ( (-1) * (model.getwD() * D)/model.getDmax() 
-                    - ( model.getwL() * project.getTubLen() ) / model.getMaxLenTub()
-                    - ( model.getwS() * project.getFloodS() ) / S_cal
+                    - plantTypeKoef
                     + model.getWk() * k + model.getWc() * c 
                     - (model.getwTc() * project.getTc_tot()) / model.getCost()
                     
@@ -740,11 +670,15 @@ public class HppAlgo {
         return true;
     }
     
-    protected double floodArea(DamModel dam) throws Exception {
+    protected FloodInfo floodArea(DamModel dam) throws Exception {
         if ( dam == null ) {
             throw new Exception("No dam model.");
         }
 
+        FloodInfo flood = new FloodInfo();
+        
+        flood.setDam(dam);
+        
         RiverEdge curEdge = null;
         
         TerrainPoint nextDamPoint = null, curBasePoint = null, workingPoint = null;
@@ -773,29 +707,30 @@ public class HppAlgo {
         
         if (curEdge == null) {
             log.debug("Start of river was reached (not implemented).");
-            return 0;
+            return null;
         }
         
         if (nextDamPoint == null) {
             log.debug("Dam point is null (not implemented).");
-            return 0;
+            return null;
         }
         
         log.debug(String.format("Upper dam point: %s", nextDamPoint));
         
-        upperDam = DamModel.findMinimalDam(model.getTerrainModel(), curEdge, nextDamPoint, 1);
+        DamModel upperDam = DamModel.findMinimalDam(model.getTerrainModel(), curEdge, nextDamPoint, 1);
+        flood.setUpperDam(upperDam);
         TerrainLine upperDamLine = upperDam.getLine();
         
         log.debug(String.format("Upper dam : %s", upperDam));
         
-        TerrainPoint damIntersect = damModel.getLine().intersection( upperDam.getLine() ),
+        TerrainPoint damIntersect = dam.getLine().intersection( upperDam.getLine() ),
                      leftPoint = null,
                      rightPoint = null;
         
         log.debug("Dams intersect: " + damIntersect);
         
         if ( damIntersect != null 
-                && damIntersect.isBetween( damModel.getLeftPoint(), damModel.getRightPoint()) ) {
+                && damIntersect.isBetween( dam.getLeftPoint(), dam.getRightPoint()) ) {
             upperDamLine = dam.getLine().parallelLineByPoint(nextDamPoint);
             log.debug("Corrected upper dam line: " + upperDamLine);
         } 
@@ -803,7 +738,7 @@ public class HppAlgo {
         leftPoint = DamModel.findLeftBank(model.getTerrainModel(), upperDamLine, nextDamPoint);
         rightPoint = DamModel.findRightBank(model.getTerrainModel(), upperDamLine, nextDamPoint);
         
-        floodAreaPoints = new ArrayList<>();
+        List<TerrainPoint> floodAreaPoints = new ArrayList<>();
         
         if ( leftPoint == null || rightPoint == null ) {
             log.debug("Can`t find upper dam bound points.");
@@ -813,6 +748,8 @@ public class HppAlgo {
             floodAreaPoints.add( dam.getRightPoint() );
             floodAreaPoints.add( dam.getLeftPoint() );
         }
+        
+        flood.setFloodAreaPoints(floodAreaPoints);
         
         for (TerrainPoint point : floodAreaPoints) {
             log.debug("\tFlood area point:" + point);
@@ -830,10 +767,12 @@ public class HppAlgo {
         
         TerrainPoint heightPoint = dmLine.intersection(heightLine);
         
-        trapezeHeight = new ArrayList<>();
+        List<TerrainPoint> trapezeHeight = new ArrayList<>();
         trapezeHeight.add( heightPoint );
         trapezeHeight.add( leftPoint );
         log.debug(String.format("Trapeze height: base = %s, left point = %s", heightPoint, leftPoint));
+        
+        flood.setTrapezeHeight(trapezeHeight);
         
         double height = TerrainPoint.distance(heightPoint, leftPoint);
         
@@ -849,7 +788,8 @@ public class HppAlgo {
             }
         }
         
-        return floodSquare * pxScale_2;
+        flood.setFloodArea( floodSquare * pxScale_2 );
+        return flood;
     }
     
     protected int findHeight(TerrainPoint point) {
@@ -889,5 +829,9 @@ public class HppAlgo {
         
         return closestPoint;
     }
-    
+
+    @Override
+    public String toString() {
+        return "HppAlgo{" + "model=" + model + ", status=" + status + ", Dam_begin=" + Dam_begin + ", Dam_end=" + Dam_end + ", LengthRB=" + LengthRB + ", Fall_min=" + Fall_min + ", Fall_max=" + Fall_max + ", Range_dam=" + Range_dam + ", Range_fall=" + Range_fall + ", NP=" + NP + ", calFlood=" + calFlood + ", intersection=" + intersection + ", GenRate_norm0=" + GenRate_norm0 + ", Range_rate=" + Range_rate + ", Popt_year_ud=" + Popt_year_ud + ", projects=" + projects + ", bestProject=" + bestProject + '}';
+    }
 }

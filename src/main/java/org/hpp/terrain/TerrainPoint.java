@@ -106,6 +106,10 @@ public class TerrainPoint {
         return null;
     }
     
+    public static TerrainPoint fromPoint(Point point) {
+        return new TerrainPoint(point.x, point.y);
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

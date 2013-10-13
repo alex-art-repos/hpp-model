@@ -241,7 +241,7 @@ public class RiverModel {
             if ( Math.abs( curDist - distance ) < delta  ) {
                 return new RiverRange.Pair(edge, edge.getStop());
             } else {
-                return new RiverRange.Pair(edge, this.findPointOnEdge(edge, distance));
+                return new RiverRange.Pair(edge, this.findPointOnEdge(edge, distance, delta));
             }
         } else {
             distance -= curDist; // shift in first gap
@@ -260,9 +260,9 @@ public class RiverModel {
                 
                 if ( curDist > distance ) {
                     if ( Math.abs( curDist - distance ) < delta  ) {
-                        return new RiverRange.Pair(edge, edge.getStop());
+                        return new RiverRange.Pair(curEdge, curEdge.getStop());
                     } else {
-                        return new RiverRange.Pair(edge, this.findPointOnEdge(edge, distance));
+                        return new RiverRange.Pair(curEdge, this.findPointOnEdge(curEdge, distance, delta));
                     }
                 }
                 
@@ -279,11 +279,27 @@ public class RiverModel {
         return null;
     }
     
-    protected TerrainPoint findPointOnEdge(RiverEdge edge, double distance) {
+    protected TerrainPoint findPointOnEdge(RiverEdge edge, double distance, double delta) {
+        if ( distance < delta ) {
+            return edge.getStart(); // 0 distance is first point.
+        }
+        
         List<TerrainPoint> points = edge.circleIntersection(edge.getStart(), (int)Math.floor(distance) );
         
-        if ( points == null || points.size() != 1 ) {
-            throw new AssertionError("Algorithm error: no point on edge found.");
+        if ( points == null ) {
+            return edge.getStop();
+        } else if ( points.size() != 1 ) {
+            double dist = Double.MAX_VALUE, curDist = 0;
+            TerrainPoint closestPoint = edge.getStart();
+            for (TerrainPoint point : points) {
+                curDist = TerrainPoint.distance(edge.getStart(), point);
+                if ( curDist < dist ) {
+                    dist = curDist;
+                    closestPoint = point;
+                }
+            }
+            
+            return closestPoint;
         }
         
         return points.get(0);

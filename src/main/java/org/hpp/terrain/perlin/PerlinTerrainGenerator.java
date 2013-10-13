@@ -20,8 +20,15 @@ public class PerlinTerrainGenerator {
     
     protected Perlin perlin = new Perlin();
 
+    private int threadCount = 1;
+    
     public PerlinTerrainGenerator() {
         super();
+    }
+    
+    public PerlinTerrainGenerator(int theThreadCount) {
+        super();
+        threadCount = theThreadCount;
     }
     
     public void setSeed(Integer seed) {
@@ -45,7 +52,11 @@ public class PerlinTerrainGenerator {
             heightMapBuilder.setDestSize(width, height);
             heightMapBuilder.setBounds(minX, maxX, minZ, maxZ);
             
-            heightMapBuilder.build();
+            if ( threadCount <= 1 ) {
+                heightMapBuilder.build();
+            } else {
+                heightMapBuilder.build(threadCount);
+            }
         } catch (Exception exc) {
             heightMap = null;
             log.error("Can`t generate map: " + exc.toString());

@@ -46,9 +46,9 @@ public class HppModelTest {
         
         String testFile = "test-model.xml";
         
-        model.saveToFile(testFile, false);
+        model.saveToDefaults(false);
         
-        HppModel loadedModel = HppModel.loadFromFile(testFile, false);
+        HppModel loadedModel = HppModel.loadFromDefaults(false);
         
         assertEquals(model.getCap_user(), loadedModel.getCap_user(), 0.00001);
         

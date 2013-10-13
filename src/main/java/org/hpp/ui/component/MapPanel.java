@@ -37,6 +37,7 @@ public class MapPanel extends JPanel {
     }
 
     public MapPanel() {
+        super();
     }
 
     @Override

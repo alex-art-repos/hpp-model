@@ -19,11 +19,8 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
         
-        showDamBtn.setEnabled(false);
-        showDamBtn.setVisible(false);
-        
-        showFloodBtn.setEnabled(false);
-        showFloodBtn.setVisible(false);
+        showProjectBtn.setEnabled(false);
+        showProjectBtn.setVisible(false);
     }
     
     public void startup() {
@@ -60,20 +57,31 @@ public class MainForm extends javax.swing.JFrame {
         algoStatusField = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         algorithmValueTab = new javax.swing.JTable();
-        showTownRadiusBtn = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         scaleLab = new javax.swing.JLabel();
-        showDamBtn = new javax.swing.JButton();
-        showFloodBtn = new javax.swing.JButton();
         block2Btn = new javax.swing.JButton();
         block3Btn = new javax.swing.JButton();
+        showProjectBtn = new javax.swing.JButton();
+        showTownBtn = new javax.swing.JToggleButton();
+        showProjectsBtn = new javax.swing.JToggleButton();
+        showDamBtn = new javax.swing.JToggleButton();
+        showFloodBtn = new javax.swing.JToggleButton();
         outputParamPanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        curProjectTab = new javax.swing.JTable();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        bestProjectTab = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         mainMenu = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newModelItem = new javax.swing.JMenuItem();
+        loadHppModelItem = new javax.swing.JMenuItem();
+        saveHppModelItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         loadModelItem = new javax.swing.JMenuItem();
         saveModelItem = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
         exitMenu = new javax.swing.JMenuItem();
         mapMenu = new javax.swing.JMenu();
         genMapMenu = new javax.swing.JMenuItem();
@@ -84,7 +92,7 @@ public class MainForm extends javax.swing.JFrame {
         setTitle("Hydropower plant model");
         setLocationByPlatform(true);
 
-        mainSplit.setDividerLocation(150);
+        mainSplit.setDividerLocation(250);
         mainSplit.setOneTouchExpandable(true);
 
         inputValueTab.setModel(new javax.swing.table.DefaultTableModel(
@@ -114,7 +122,7 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(inputParamPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(179, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         inputParamPanelLayout.setVerticalGroup(
@@ -123,12 +131,12 @@ public class MainForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE))
         );
 
         mainSplit.setLeftComponent(inputParamPanel);
 
-        modelSplit.setDividerLocation(450);
+        modelSplit.setDividerLocation(500);
         modelSplit.setOneTouchExpandable(true);
 
         mapScroll.setAutoscrolls(true);
@@ -195,30 +203,9 @@ public class MainForm extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(algorithmValueTab);
 
-        showTownRadiusBtn.setText("town radius");
-        showTownRadiusBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showTownRadiusBtnActionPerformed(evt);
-            }
-        });
-
         jLabel5.setText("Scale:");
 
         scaleLab.setText("1:1");
-
-        showDamBtn.setText("dam");
-        showDamBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showDamBtnActionPerformed(evt);
-            }
-        });
-
-        showFloodBtn.setText("flood");
-        showFloodBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showFloodBtnActionPerformed(evt);
-            }
-        });
 
         block2Btn.setText("block2");
         block2Btn.addActionListener(new java.awt.event.ActionListener() {
@@ -234,33 +221,51 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        showProjectBtn.setText("project");
+        showProjectBtn.setToolTipText("");
+        showProjectBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showProjectBtnActionPerformed(evt);
+            }
+        });
+
+        showTownBtn.setText("town");
+        showTownBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTownBtnActionPerformed(evt);
+            }
+        });
+
+        showProjectsBtn.setText("projects");
+        showProjectsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showProjectsBtnActionPerformed(evt);
+            }
+        });
+
+        showDamBtn.setText("dam");
+        showDamBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showDamBtnActionPerformed(evt);
+            }
+        });
+
+        showFloodBtn.setText("flood");
+        showFloodBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showFloodBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout mapPanelBackgroundLayout = new javax.swing.GroupLayout(mapPanelBackground);
         mapPanelBackground.setLayout(mapPanelBackgroundLayout);
         mapPanelBackgroundLayout.setHorizontalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mapScroll)
-            .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(curHeightLab)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(showTownRadiusBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(showDamBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(showFloodBtn)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jSeparator2))
-                .addContainerGap())
+            .addComponent(mapScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
                         .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
@@ -280,7 +285,25 @@ public class MainForm extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(scaleLab)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(showProjectBtn)
+                        .addGap(103, 103, 103))
+                    .addGroup(mapPanelBackgroundLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(curHeightLab)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(showTownBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showProjectsBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showDamBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showFloodBtn)
+                        .addGap(64, 64, 64))))
+            .addComponent(jSeparator2)
         );
         mapPanelBackgroundLayout.setVerticalGroup(
             mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,16 +312,20 @@ public class MainForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(scaleLab))
-                .addGap(14, 14, 14)
-                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(curHeightLab)
-                    .addComponent(jLabel4)
-                    .addComponent(showTownRadiusBtn)
-                    .addComponent(showDamBtn)
-                    .addComponent(showFloodBtn))
+                    .addComponent(scaleLab)
+                    .addComponent(showProjectBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(curHeightLab)
+                        .addComponent(jLabel4))
+                    .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(showTownBtn)
+                        .addComponent(showProjectsBtn)
+                        .addComponent(showDamBtn)
+                        .addComponent(showFloodBtn)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mapPanelBackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -319,15 +346,71 @@ public class MainForm extends javax.swing.JFrame {
 
         modelSplit.setLeftComponent(mapScrollPane);
 
+        curProjectTab.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        curProjectTab.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                curProjectTabPropertyChange(evt);
+            }
+        });
+        jScrollPane3.setViewportView(curProjectTab);
+
+        bestProjectTab.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        bestProjectTab.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                bestProjectTabPropertyChange(evt);
+            }
+        });
+        jScrollPane4.setViewportView(bestProjectTab);
+
+        jLabel6.setText("Best project");
+
+        jLabel7.setText("Current project");
+
         javax.swing.GroupLayout outputParamPanelLayout = new javax.swing.GroupLayout(outputParamPanel);
         outputParamPanel.setLayout(outputParamPanelLayout);
         outputParamPanelLayout.setHorizontalGroup(
             outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 108, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+            .addGroup(outputParamPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel6))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         outputParamPanelLayout.setVerticalGroup(
             outputParamPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 720, Short.MAX_VALUE)
+            .addGroup(outputParamPanelLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         modelSplit.setRightComponent(outputParamPanel);
@@ -336,7 +419,7 @@ public class MainForm extends javax.swing.JFrame {
         modelPanel.setLayout(modelPanelLayout);
         modelPanelLayout.setHorizontalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+            .addComponent(modelSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE)
         );
         modelPanelLayout.setVerticalGroup(
             modelPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -355,7 +438,24 @@ public class MainForm extends javax.swing.JFrame {
         });
         fileMenu.add(newModelItem);
 
-        loadModelItem.setText("Load model");
+        loadHppModelItem.setText("Load HPP model");
+        loadHppModelItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadHppModelItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadHppModelItem);
+
+        saveHppModelItem.setText("Save HPP model");
+        saveHppModelItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveHppModelItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveHppModelItem);
+        fileMenu.add(jSeparator1);
+
+        loadModelItem.setText("Load full model");
         loadModelItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadModelItemActionPerformed(evt);
@@ -363,14 +463,14 @@ public class MainForm extends javax.swing.JFrame {
         });
         fileMenu.add(loadModelItem);
 
-        saveModelItem.setText("Save model");
+        saveModelItem.setText("Save full model");
         saveModelItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveModelItemActionPerformed(evt);
             }
         });
         fileMenu.add(saveModelItem);
-        fileMenu.add(jSeparator1);
+        fileMenu.add(jSeparator3);
 
         exitMenu.setText("Exit");
         exitMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -400,7 +500,7 @@ public class MainForm extends javax.swing.JFrame {
         });
         mapMenu.add(saveMapMenu);
 
-        saveScreenShotItem.setText("Save map screen shot");
+        saveScreenShotItem.setText("Save map screenshot");
         saveScreenShotItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveScreenShotItemActionPerformed(evt);
@@ -416,7 +516,7 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
+            .addComponent(mainSplit)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -433,7 +533,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_genMapMenuActionPerformed
 
     private void saveMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMapMenuActionPerformed
-        formCtrl.saveMapToFile("map.png");
+        formCtrl.saveMapToFile();
     }//GEN-LAST:event_saveMapMenuActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
@@ -441,12 +541,12 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuActionPerformed
 
     private void loadModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadModelItemActionPerformed
-        formCtrl.loadInputValues();
+        formCtrl.loadInputValues(true);
         formCtrl.refreshInputValFromModel(null);
     }//GEN-LAST:event_loadModelItemActionPerformed
 
     private void saveModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveModelItemActionPerformed
-        formCtrl.saveInputValues();
+        formCtrl.saveInputValues(true);
     }//GEN-LAST:event_saveModelItemActionPerformed
 
     private void newModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newModelItemActionPerformed
@@ -459,11 +559,12 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_inputValueTabPropertyChange
 
     private void saveScreenShotItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveScreenShotItemActionPerformed
-        formCtrl.saveMapScreenshotToFile("screenshot.png");
+        formCtrl.saveMapScreenshotToFile();
     }//GEN-LAST:event_saveScreenShotItemActionPerformed
 
     private void mapPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapPanelMouseClicked
         formCtrl.showCurrentHeight(evt.getPoint());
+        formCtrl.showCurrentProject(evt.getPoint());
     }//GEN-LAST:event_mapPanelMouseClicked
 
     private void startAlgoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startAlgoBtnActionPerformed
@@ -478,9 +579,33 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_algorithmValueTabPropertyChange
 
-    private void showTownRadiusBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTownRadiusBtnActionPerformed
+    private void block2BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block2BtnActionPerformed
+        formCtrl.block2Algorithm();
+    }//GEN-LAST:event_block2BtnActionPerformed
+
+    private void block3BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block3BtnActionPerformed
+        formCtrl.block3Algorithm();
+    }//GEN-LAST:event_block3BtnActionPerformed
+
+    private void curProjectTabPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_curProjectTabPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_curProjectTabPropertyChange
+
+    private void bestProjectTabPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_bestProjectTabPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bestProjectTabPropertyChange
+
+    private void showProjectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showProjectBtnActionPerformed
+        formCtrl.showProjectInfo();
+    }//GEN-LAST:event_showProjectBtnActionPerformed
+
+    private void showTownBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTownBtnActionPerformed
         formCtrl.drawTownModel();
-    }//GEN-LAST:event_showTownRadiusBtnActionPerformed
+    }//GEN-LAST:event_showTownBtnActionPerformed
+
+    private void showProjectsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showProjectsBtnActionPerformed
+        formCtrl.showProjects();
+    }//GEN-LAST:event_showProjectsBtnActionPerformed
 
     private void showDamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showDamBtnActionPerformed
         formCtrl.drawDamModel();
@@ -490,21 +615,24 @@ public class MainForm extends javax.swing.JFrame {
         formCtrl.drawFloodModel();
     }//GEN-LAST:event_showFloodBtnActionPerformed
 
-    private void block2BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block2BtnActionPerformed
-        formCtrl.block2Algorithm();
-    }//GEN-LAST:event_block2BtnActionPerformed
+    private void loadHppModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadHppModelItemActionPerformed
+        formCtrl.loadInputValues(false);
+        formCtrl.refreshInputValFromModel(null);        
+    }//GEN-LAST:event_loadHppModelItemActionPerformed
 
-    private void block3BtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_block3BtnActionPerformed
-        formCtrl.block3Algorithm();
-    }//GEN-LAST:event_block3BtnActionPerformed
+    private void saveHppModelItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveHppModelItemActionPerformed
+        formCtrl.saveInputValues(false);        
+    }//GEN-LAST:event_saveHppModelItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton algoStatusField;
     public javax.swing.JTable algorithmValueTab;
+    public javax.swing.JTable bestProjectTab;
     public javax.swing.JButton block1Btn;
     public javax.swing.JButton block2Btn;
     public javax.swing.JButton block3Btn;
     public javax.swing.JLabel curHeightLab;
+    public javax.swing.JTable curProjectTab;
     public javax.swing.JMenuItem exitMenu;
     public javax.swing.JMenu fileMenu;
     public javax.swing.JMenuItem genMapMenu;
@@ -515,10 +643,16 @@ public class MainForm extends javax.swing.JFrame {
     public javax.swing.JLabel jLabel3;
     public javax.swing.JLabel jLabel4;
     public javax.swing.JLabel jLabel5;
+    public javax.swing.JLabel jLabel6;
+    public javax.swing.JLabel jLabel7;
     public javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JScrollPane jScrollPane3;
+    public javax.swing.JScrollPane jScrollPane4;
     public javax.swing.JPopupMenu.Separator jSeparator1;
     public javax.swing.JSeparator jSeparator2;
+    public javax.swing.JPopupMenu.Separator jSeparator3;
+    public javax.swing.JMenuItem loadHppModelItem;
     public javax.swing.JMenuItem loadModelItem;
     public javax.swing.JMenuBar mainMenu;
     public javax.swing.JSplitPane mainSplit;
@@ -531,13 +665,16 @@ public class MainForm extends javax.swing.JFrame {
     public javax.swing.JSplitPane modelSplit;
     public javax.swing.JMenuItem newModelItem;
     public javax.swing.JPanel outputParamPanel;
+    public javax.swing.JMenuItem saveHppModelItem;
     public javax.swing.JMenuItem saveMapMenu;
     public javax.swing.JMenuItem saveModelItem;
     public javax.swing.JMenuItem saveScreenShotItem;
     public javax.swing.JLabel scaleLab;
-    public javax.swing.JButton showDamBtn;
-    public javax.swing.JButton showFloodBtn;
-    public javax.swing.JButton showTownRadiusBtn;
+    public javax.swing.JToggleButton showDamBtn;
+    public javax.swing.JToggleButton showFloodBtn;
+    public javax.swing.JButton showProjectBtn;
+    public javax.swing.JToggleButton showProjectsBtn;
+    public javax.swing.JToggleButton showTownBtn;
     public javax.swing.JButton startAlgoBtn;
     // End of variables declaration//GEN-END:variables
 }

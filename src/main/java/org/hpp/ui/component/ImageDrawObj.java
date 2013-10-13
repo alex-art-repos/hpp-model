@@ -26,7 +26,7 @@ public class ImageDrawObj implements IDrawObject {
     @Override
     public void paint(Graphics g, ImageObserver imgObs) {
         if ( image != null && pos != null) {
-            g.drawImage( image, pos.getX(), pos.getY() - image.getHeight()/2, imgObs);
+            g.drawImage( image, pos.getX() - image.getHeight()/2, pos.getY() - image.getHeight()/2, imgObs);
         }
     }
 

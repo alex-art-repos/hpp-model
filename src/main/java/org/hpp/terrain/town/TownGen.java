@@ -21,7 +21,7 @@ public class TownGen {
     public TownModel genTown(TerrainModel terrain, RiverModel river) {
         TownModel model = new TownModel();
         
-        model.setCenter( new TerrainPoint( 1 , terrain.getMapHeight() / 2) );
+        model.setCenter( new TerrainPoint( 30 , terrain.getMapHeight() / 2) );
         
         return model;
     }

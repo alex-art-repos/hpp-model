@@ -428,7 +428,7 @@ public class HppModel {
         return this.toPx(1000 * value);
     }
     
-    public void saveToFile(String fileName, boolean bIsFull) throws Exception {
+    public void saveToDefaults(boolean bIsFull) throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
         
         Marshaller marshaller = ctx.createMarshaller();
@@ -436,7 +436,7 @@ public class HppModel {
         marshaller.setProperty( Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true);
         
-        marshaller.marshal(this, new File(fileName == null ? DEF_FILE_NAME : fileName));
+        marshaller.marshal(this, new File(DEF_FILE_NAME));
         
         if ( bIsFull ) {
             if ( river != null ) {
@@ -449,12 +449,43 @@ public class HppModel {
         }
     }
     
-    public static HppModel loadFromFile(String fileName, boolean bIsFull) throws Exception {
+    /**
+     *  Save models.
+     * models[0] - hpp model path
+     * models[1] - terrain model path
+     * models[2] - river model path
+     * 
+     * @param models
+     * @param bIsFull
+     * @throws Exception
+     */
+    public void saveToFile(String models[], boolean bIsFull) throws Exception {
+        JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
+        
+        Marshaller marshaller = ctx.createMarshaller();
+        
+        marshaller.setProperty( Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        
+        marshaller.marshal(this, new File(models[0] == null ? DEF_FILE_NAME : models[0]));
+        
+        if ( bIsFull ) {
+            if ( terrain != null ) {
+                terrain.saveToFile(models[1]);
+            }
+            
+            if ( river != null ) {
+                river.saveToFile(models[2]);
+            }
+        }
+    }
+    
+    public static HppModel loadFromDefaults(boolean bIsFull) throws Exception {
         JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
         
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
         
-        HppModel model = (HppModel)unmarshaller.unmarshal(new File(fileName == null ? DEF_FILE_NAME : fileName));
+        HppModel model = (HppModel)unmarshaller.unmarshal(new File(DEF_FILE_NAME));
         
         double days[] = loadRateMiddleDayFromFile(RATE_MIDDLE_DAY_FILE);
         
@@ -464,6 +495,37 @@ public class HppModel {
             model.setRiverModel(RiverModel.loadFromFile(null));
 
             model.setTerrainModel( TerrainModel.loadFromFile(null));
+        }
+        
+        return model;
+    }
+    
+    /**
+     * Load models from files. 
+     * models[0] - hpp model
+     * models[1] - terrain model
+     * models[2] - river model
+     * models[3] - rate model (properties)
+     * @param models
+     * @param bIsFull
+     * @return
+     * @throws Exception
+     */
+    public static HppModel loadFromFile(String[] models, boolean bIsFull) throws Exception {
+        JAXBContext ctx = JAXBContext.newInstance(HppModel.class);
+        
+        Unmarshaller unmarshaller = ctx.createUnmarshaller();
+        
+        HppModel model = (HppModel)unmarshaller.unmarshal(new File(models[0] == null ? DEF_FILE_NAME : models[0]));
+        
+        double days[] = loadRateMiddleDayFromFile(models[3]);
+        
+        model.setRate_midleday(days);
+        
+        if ( bIsFull ) {
+            model.setTerrainModel( TerrainModel.loadFromFile(models[1]));
+            
+            model.setRiverModel(RiverModel.loadFromFile(models[2]));
         }
         
         return model;
