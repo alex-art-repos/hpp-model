@@ -28,10 +28,6 @@ import org.slf4j.LoggerFactory;
  * @author Gautama
  */
 public class HppAlgo {
-    public static enum Status {
-        NOT_STARTED, OK, FAIL;
-    }
-    
     public static enum HydroPlant {
         DAM, DERIVATE;
     }
@@ -63,8 +59,6 @@ public class HppAlgo {
     
     private HppModel model = null;
     
-    private HppAlgo.Status status = Status.NOT_STARTED;
-    
     private TerrainPoint Dam_begin = null;
     private TerrainPoint Dam_end = null;
     
@@ -89,6 +83,8 @@ public class HppAlgo {
     private List<HppProject> projects = new ArrayList<>();
     private HppProject bestProject = null;
     
+    private final HppAlgoFSM algoFSM = new HppAlgoFSM();
+    
     public HppAlgo(HppModel theModel) {
         super();
         model = theModel;
@@ -100,10 +96,6 @@ public class HppAlgo {
 
     public void setModel(HppModel model) {
         this.model = model;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public TerrainPoint getDam_begin() {
@@ -177,9 +169,32 @@ public class HppAlgo {
     public void setProjects(List<HppProject> fakeProjs) {
         projects = fakeProjs;
     }
+
+    public boolean isCompleted() {
+        return algoFSM.getState() == HppAlgoFSM.AlgoState.COMPLETED;
+    }
     
-    public void block1() throws Exception {
-        status = Status.FAIL;
+    public boolean isOk() {
+        return algoFSM.isOk();
+    }
+    
+    public String getStateString() {
+        return algoFSM.getStateString();
+    }
+    
+    public String getStateMsg() {
+        return algoFSM.getMsg();
+    }
+    
+    public HppAlgoFSM.AlgoState getState() {
+        return algoFSM.getState();
+    }
+    
+    public void block1() {
+        if ( !algoFSM.enterBlock1() ) {
+            log.warn("Can`t enter BLOCK1: " + algoFSM.getState());
+            return;
+        }
         
         if ( this.checkIntersection() ) {
             Dam_begin = intersection.firstPoint();
@@ -195,7 +210,8 @@ public class HppAlgo {
                 Dam_end = edges.get(edges.size() - 1).getStop();
                 log.debug(String.format("Used whole river."));
             } else {
-                throw new Exception("No intersection.");
+                algoFSM.fail("No intersection.");
+                return;
             }
         }
         
@@ -229,7 +245,13 @@ public class HppAlgo {
         log.debug("Found dam: " + damModel + ", width = " + (damModel == null ? 0 : damModel.getWidth()) );
 
         if ( damModel != null ) {
-            calFlood = this.floodArea(damModel);
+            try {
+                calFlood = this.floodArea(damModel);
+            } catch (Exception exc) {
+                log.warn(LogHelper.self().printException("Can`t find flood area. ", exc));
+                algoFSM.fail("Can`t find flood area.");
+                return;
+            }
         } else {
             calFlood = null;
         }
@@ -238,11 +260,14 @@ public class HppAlgo {
 
         log.debug("BLOCK1[" + new Date() + "]: " + this);
         
-        status = Status.OK;
+        algoFSM.ok(null);
     }
     
-    public void block2() throws Exception {
-        status = Status.FAIL;
+    public void block2() {
+        if ( !algoFSM.enterBlock2() ) {
+            log.warn("Can`t enter BLOCK2: " + algoFSM.getState());
+            return;
+        }
         
         GenRate_norm0 = model.getRate() * model.getVstok();
         
@@ -300,16 +325,32 @@ public class HppAlgo {
         
         log.debug("BLOCK2[" + new Date() + "]: " + this);
         
-        status = Status.OK;
+        algoFSM.ok(null);
     }
     
-    public void block3() throws Exception {
-        status = Status.FAIL;
+    public void block3() {
+        if ( !algoFSM.enterBlock3() ) {
+            log.warn("Can`t enter BLOCK3: " + algoFSM.getState());
+            return;
+        }
         
         projects.clear();
         
-        this.buildDamProjects();
-        this.buildDerivateProjects();
+        try {
+            this.buildDamProjects();
+        } catch (Exception exc) {
+            log.warn(LogHelper.self().printException("Can`y build DAM projects: ", exc));
+            algoFSM.fail("Can`t build DAM projects.");
+            return;
+        }
+        
+        try {
+            this.buildDerivateProjects();
+        } catch (Exception exc) {
+            log.warn(LogHelper.self().printException("Can`y build DERIVATE projects: ", exc));
+            algoFSM.fail("Can`t build DERIVATE projects.");
+            return;
+        }
         
         this.findBestProject();
         
@@ -317,7 +358,7 @@ public class HppAlgo {
         
         log.debug("BLOCK3[" + new Date() + "]: Project count = " + projects.size());
         
-        status = Status.OK;
+        algoFSM.ok(null);
     }
 
     protected void findBestProject() {
@@ -630,6 +671,9 @@ public class HppAlgo {
         
         double c = Pcur_year_ud / NP;
         
+        project.setK(k);
+        project.setC(c);
+        
         double rw = 1 / Math.sqrt(
                         model.getwD() * model.getwD() + 
                         model.getwL() * model.getwL() + 
@@ -832,6 +876,6 @@ public class HppAlgo {
 
     @Override
     public String toString() {
-        return "HppAlgo{" + "model=" + model + ", status=" + status + ", Dam_begin=" + Dam_begin + ", Dam_end=" + Dam_end + ", LengthRB=" + LengthRB + ", Fall_min=" + Fall_min + ", Fall_max=" + Fall_max + ", Range_dam=" + Range_dam + ", Range_fall=" + Range_fall + ", NP=" + NP + ", calFlood=" + calFlood + ", intersection=" + intersection + ", GenRate_norm0=" + GenRate_norm0 + ", Range_rate=" + Range_rate + ", Popt_year_ud=" + Popt_year_ud + ", projects=" + projects + ", bestProject=" + bestProject + '}';
+        return "HppAlgo{" + "model=" + model + ", state=" + algoFSM + ", Dam_begin=" + Dam_begin + ", Dam_end=" + Dam_end + ", LengthRB=" + LengthRB + ", Fall_min=" + Fall_min + ", Fall_max=" + Fall_max + ", Range_dam=" + Range_dam + ", Range_fall=" + Range_fall + ", NP=" + NP + ", calFlood=" + calFlood + ", intersection=" + intersection + ", GenRate_norm0=" + GenRate_norm0 + ", Range_rate=" + Range_rate + ", Popt_year_ud=" + Popt_year_ud + ", projects=" + projects + ", bestProject=" + bestProject + '}';
     }
 }

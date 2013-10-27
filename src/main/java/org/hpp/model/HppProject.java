@@ -23,13 +23,13 @@ public class HppProject {
     static {
         Map<String, String> map = new HashMap<>();
 
-        map.put("Cc", "rub");
-        map.put("Cc_tot", "rub");
-        map.put("Cem", "rub");
-        map.put("Cem_tot", "rub");
-        map.put("Tc", "rub");
-        map.put("Tc_tot", "rub");
-        map.put("P_cur", "watt");
+        map.put("Cc", "rub/kW");
+        map.put("Cc_tot", "1000 rub");
+        map.put("Cem", "rub/kW");
+        map.put("Cem_tot", "1000 rub");
+        map.put("Tc", "rub/kW");
+        map.put("Tc_tot", "1000 rub");
+        map.put("P_cur", "MWatt");
         map.put("Fall_cur", "m");
         map.put("FloodS", "m^2");
         map.put("TubLen", "km");
@@ -53,6 +53,9 @@ public class HppProject {
     private TubeInfo tubeInfo;
     private double rank;
 
+    private double k;
+    private double c;
+    
     public HppProject() {
         super();
     }
@@ -198,9 +201,24 @@ public class HppProject {
         this.rank = rank;
     }
 
-    @Override
-    public String toString() {
-        return "HppProject{" + "cp=" + cp + ", co=" + co + ", plantType=" + plantType + ", Cc=" + Cc + ", Cc_tot=" + Cc_tot + ", Cem=" + Cem + ", Cem_tot=" + Cem_tot + ", Tc=" + Tc + ", Tc_tot=" + Tc_tot + ", P_cur=" + P_cur + ", Fall_cur=" + Fall_cur + ", pair=" + pair + ", flood=" + flood + ", dam=" + dam + ", tubeInfo=" + tubeInfo + ", rank=" + rank + '}';
+    public double getK() {
+        return k;
     }
 
+    public void setK(double k) {
+        this.k = k;
+    }
+
+    public double getC() {
+        return c;
+    }
+
+    public void setC(double c) {
+        this.c = c;
+    }
+
+    @Override
+    public String toString() {
+        return "HppProject{" + "cp=" + cp + ", co=" + co + ", plantType=" + plantType + ", Cc=" + Cc + ", Cc_tot=" + Cc_tot + ", Cem=" + Cem + ", Cem_tot=" + Cem_tot + ", Tc=" + Tc + ", Tc_tot=" + Tc_tot + ", P_cur=" + P_cur + ", Fall_cur=" + Fall_cur + ", pair=" + pair + ", flood=" + flood + ", dam=" + dam + ", tubeInfo=" + tubeInfo + ", rank=" + rank + ", k=" + k + ", c=" + c + '}';
+    }
 }

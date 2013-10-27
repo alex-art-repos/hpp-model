@@ -11,16 +11,18 @@ import org.hpp.ui.ctrl.MainFormCtrl;
  * @author root
  */
 public class MainForm extends javax.swing.JFrame {
-    private MainFormCtrl formCtrl = new MainFormCtrl(this);
+    private final MainFormCtrl formCtrl = new MainFormCtrl(this);
 
     /**
      * Creates new form MainForm
      */
     public MainForm() {
         initComponents();
-        
+     
         showProjectBtn.setEnabled(false);
         showProjectBtn.setVisible(false);
+        
+        formCtrl.refreshAlgoButtons();
     }
     
     public void startup() {
@@ -524,6 +526,7 @@ public class MainForm extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void genMapMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genMapMenuActionPerformed

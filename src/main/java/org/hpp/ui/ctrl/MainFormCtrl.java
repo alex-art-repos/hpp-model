@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import org.hpp.domain.MapGeneratorConfig;
 import org.hpp.model.HppAlgo;
+import org.hpp.model.HppAlgoFSM;
 import org.hpp.model.HppModel;
 import org.hpp.model.HppProject;
 import org.hpp.terrain.TerrainModel;
@@ -919,6 +920,7 @@ public class MainFormCtrl extends BaseController<MainForm> {
         
         this.refreshAlgoStatus();
         this.refreshAlgoValFromModel(null);
+        this.refreshAlgoButtons();
     }
     
     public void block1Algorithm() {
@@ -930,14 +932,12 @@ public class MainFormCtrl extends BaseController<MainForm> {
         try {
             algorithm.block1();
         } catch (Exception exc) {
-            log.warn(LogHelper.self().printException("Algorithm.block1.", exc));
-            JOptionPane.showMessageDialog(this.getForm(), "Block1: " + exc.toString(), 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        } finally {
-            this.refreshAlgoStatus();
-            this.refreshAlgoValFromModel(null);
+            log.warn(LogHelper.self().printException("Runtime error Algorithm.Block1.", exc));
         }
+        
+        this.refreshAlgoStatus();
+        this.refreshAlgoValFromModel(null);
+        this.refreshAlgoButtons();
     }
     
     public void block2Algorithm() {
@@ -949,14 +949,12 @@ public class MainFormCtrl extends BaseController<MainForm> {
         try {
             algorithm.block2();
         } catch (Exception exc) {
-            log.warn(LogHelper.self().printException("Algorithm.block2.", exc));
-            JOptionPane.showMessageDialog(this.getForm(), "Block2: " + exc.toString(), 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        } finally {
-            this.refreshAlgoStatus();
-            this.refreshAlgoValFromModel(null);
-        }
+            log.warn(LogHelper.self().printException("Runtime error Algorithm.Block2.", exc));
+        } 
+        
+        this.refreshAlgoStatus();
+        this.refreshAlgoValFromModel(null);
+        this.refreshAlgoButtons();
     }
     
     public void block3Algorithm() {
@@ -968,20 +966,20 @@ public class MainFormCtrl extends BaseController<MainForm> {
         try {
             algorithm.block3();
         } catch (Exception exc) {
-            log.warn(LogHelper.self().printException("Algorithm.block3.", exc));
-            JOptionPane.showMessageDialog(this.getForm(), "Block3: " + exc.toString(), 
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        } finally {
-            this.refreshAlgoStatus();
-            this.refreshAlgoValFromModel(null);
+            log.warn(LogHelper.self().printException("Runtime error Algorithm.Block3.", exc));
         }
         
-        JOptionPane.showMessageDialog(this.getForm(), 
-                String.format("Calculated %d projects.", algorithm.getProjects().size()), 
-                "Info", JOptionPane.INFORMATION_MESSAGE);
-        
-        this.drawProjects();
+        this.refreshAlgoStatus();
+        this.refreshAlgoValFromModel(null);
+        this.refreshAlgoButtons();
+
+        if ( algorithm.isCompleted() ) {
+            JOptionPane.showMessageDialog(this.getForm(), 
+                    String.format("Calculated %d projects.", algorithm.getProjects().size()), 
+                    "Info", JOptionPane.INFORMATION_MESSAGE);
+            
+            this.drawProjects();
+        }
     }
     
     public void refreshAlgoStatus() {
@@ -989,13 +987,45 @@ public class MainFormCtrl extends BaseController<MainForm> {
             return;
         }
         
-        if ( algorithm.getStatus() != HppAlgo.Status.FAIL ) {
+        if ( algorithm.isOk() ) {
             this.getForm().algoStatusField.setBackground( Color.GREEN );
         } else {
             this.getForm().algoStatusField.setBackground( Color.RED );
+            
+            if ( algorithm.getStateMsg() != null ) {
+                JOptionPane.showMessageDialog(this.getForm(), 
+                        String.format("%s: %s", algorithm.getStateString(), algorithm.getStateMsg()), 
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
         
-        this.getForm().algoStatusField.setText( algorithm.getStatus().toString() );
+        this.getForm().algoStatusField.setText( algorithm.getStateString() );
+    }
+    
+    public void refreshAlgoButtons() {
+        HppAlgoFSM.AlgoState state = algorithm == null ? null : algorithm.getState();
+        
+        this.getForm().block1Btn.setEnabled(false);
+        this.getForm().block2Btn.setEnabled(false);
+        this.getForm().block3Btn.setEnabled(false);
+        
+        if ( state == null ) {
+            return;
+        }
+        
+        switch(state) {
+            case NOT_STARTED:
+                this.getForm().block1Btn.setEnabled(true);
+                break;
+                
+            case BLOCK1_OK:
+                this.getForm().block2Btn.setEnabled(true);
+                break;
+                
+            case BLOCK2_OK:
+                this.getForm().block3Btn.setEnabled(true);
+                break;
+        }
     }
     
     public void startup() {

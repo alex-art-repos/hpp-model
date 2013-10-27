@@ -95,8 +95,8 @@ public class HppModel {
         Map<String, String> map = new HashMap<>();
 
         map.put("Dmax", "km");
-        map.put("Pmin", "watt");
-        map.put("Pmax", "watt");
+        map.put("Pmin", "MWatt");
+        map.put("Pmax", "MWatt");
         map.put("Cost", "mln. rub");
         map.put("Rate_min", "m^3/s");
         map.put("Rate_max", "m^3/s");

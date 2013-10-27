@@ -34,6 +34,12 @@ public class App {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                // Wait for splash impression
+                try {
+                    Thread.sleep(3000);
+                } catch (Exception ignore) { 
+                }
+                
                 MainForm frame = new MainForm();
                 frame.setVisible(true);
                 // frame.startup();

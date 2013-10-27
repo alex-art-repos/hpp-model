@@ -47,7 +47,7 @@ dependencies {
     )
 }
 
-project.version = '1.4.0'
+project.version = '1.4.1'
 project.ext.version = project.version // save current version
 
 /**
@@ -106,6 +106,7 @@ jar.doFirst {
             "Implementation-Title": "Hydropower plant modelling.", 
             "Implementation-Version": project.ext.version,
             'Main-class': project.ext.mainClass,
+            'SplashScreen-Image': 'images/deer.jpg',
             'Class-path': classPath
         )
     }
